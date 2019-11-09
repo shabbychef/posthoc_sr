@@ -1,0 +1,1731 @@
+\documentclass[10pt,a4paper,english]{article}
+
+% front matter%FOLDUP
+\usepackage[hyphens]{url}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+% for therefore
+\usepackage{amssymb}
+% for theorems?
+\usepackage{amsthm}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{caution}{Caution}
+\newtheorem*{note}{Note}
+
+% see http://tex.stackexchange.com/a/3034/2530
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage{hyperref}
+\usepackage[square,numbers]{natbib}
+%\usepackage[authoryear]{natbib}
+%\usepackage[iso]{datetime}
+%\usepackage{datetime}
+\usepackage{gitinfo2}
+
+%%http://choorucode.com/2010/05/05/how-to-add-draft-watermark-in-latex/
+%\usepackage{draftwatermark}
+%% V1 sent to Mortada.
+%% V2 on paper to JHZD.
+%% V3 sent to s.lee@BR 140826
+%\providecommand{\versnum}{V4}
+%\SetWatermarkText{DRAFT \versnum}
+%\SetWatermarkLightness{0.87}
+%\SetWatermarkScale{4.5}
+
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%\chead{}
+%\rhead{}
+%\lhead{}
+%\rhead{\sc draft \versnum; do not distribute}
+%\rfoot{}
+
+%compactitem and such:
+\usepackage[newitem,newenum,increaseonly]{paralist}
+
+\makeatletter
+\makeatother
+
+% see https://www.overleaf.com/blog/619-tip-of-the-week-add-inline-or-margin-comments-to-your-pdf#.Wk26SN-YWXI
+\usepackage[colorinlistoftodos]{todonotes}
+% for release, disable them!
+%\usepackage[disable]{todonotes}
+
+%\input{sr_defs.tex}
+% AKA SharpeR.sty
+\usepackage[notheorems]{SharpeR}
+
+%UNFOLD
+
+% knitr setup%FOLDUP
+
+<<'preamble', include=FALSE, warning=FALSE, message=FALSE>>=
+# set the knitr options ... for everyone!
+library(knitr)
+
+opts_knit$set(progress=TRUE)
+opts_knit$set(eval.after=c('fig.cap','fig.scap','out.width','out.height'))
+
+# for a package vignette, you do want to echo.
+# opts_chunk$set(echo=FALSE,warning=FALSE,message=FALSE)
+opts_chunk$set(warning=FALSE,message=FALSE)
+#opts_chunk$set(results="asis")
+mybit <- 'posthoc_'
+opts_chunk$set(cache=TRUE,cache.path=file.path("cache",mybit))
+
+opts_chunk$set(fig.path=file.path("figure",mybit),dev=c("pdf"))
+
+resol <- 10.0  # resolution, kindof
+aspr  <- 1.51  # aspect ratio
+opts_chunk$set(fig.width=resol,
+							 fig.height=resol / aspr,
+							 out.width="0.975\\textwidth",
+							 out.height=sprintf('%.3f\\textwidth',0.975/aspr),
+							 dpi=300)
+
+opts_chunk$set(fig.pos='h')
+
+# for text wrapping:
+options(width=64,digits=3)
+opts_chunk$set(size="small")
+opts_chunk$set(tidy=TRUE,tidy.opts=list(width.cutoff=50,keep.blank.line=TRUE))
+
+FINAL_VERSION <- TRUE
+
+suppressMessages({
+  library(dplyr)
+})
+if (!require(aqfb.data) && require(devtools)) {
+  devtools::install_github('shabbychef/aqfb_data')
+}
+@
+%UNFOLD
+    
+% SYMPY preamble%FOLDUP
+    
+    %\usepackage{graphicx} % Used to insert images
+    %\usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{color} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    %\usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    %\usepackage[utf8]{inputenc} % Allow utf-8 characters in the tex document
+    %\usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+		\usepackage{fancyvrb} % verbatim replacement that allows latex
+    %\usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    %\usepackage{longtable} % longtable support required by pandoc >1.10
+    
+
+    
+    
+    \definecolor{orange}{cmyk}{0,0.4,0.8,0.2}
+    \definecolor{darkorange}{rgb}{.71,0.21,0.01}
+    \definecolor{darkgreen}{rgb}{.12,.54,.11}
+    \definecolor{myteal}{rgb}{.26, .44, .56}
+    \definecolor{gray}{gray}{0.45}
+    \definecolor{lightgray}{gray}{.95}
+    \definecolor{mediumgray}{gray}{.8}
+    \definecolor{inputbackground}{rgb}{.95, .95, .85}
+    \definecolor{outputbackground}{rgb}{.95, .95, .95}
+    \definecolor{traceback}{rgb}{1, .95, .95}
+    % ansi colors
+    \definecolor{red}{rgb}{.6,0,0}
+    \definecolor{green}{rgb}{0,.65,0}
+    \definecolor{brown}{rgb}{0.6,0.6,0}
+    \definecolor{blue}{rgb}{0,.145,.698}
+    \definecolor{purple}{rgb}{.698,.145,.698}
+    \definecolor{cyan}{rgb}{0,.698,.698}
+    \definecolor{lightgray}{gray}{0.5}
+    
+    % bright ansi colors
+    \definecolor{darkgray}{gray}{0.25}
+    \definecolor{lightred}{rgb}{1.0,0.39,0.28}
+    \definecolor{lightgreen}{rgb}{0.48,0.99,0.0}
+    \definecolor{lightblue}{rgb}{0.53,0.81,0.92}
+    \definecolor{lightpurple}{rgb}{0.87,0.63,0.87}
+    \definecolor{lightcyan}{rgb}{0.5,1.0,0.83}
+    
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    
+    %\DefineShortVerb[commandchars=\\\{\}]{\|}
+    %\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    %% Add ',fontsize=\small' for more characters per line
+    %\newenvironment{Shaded}{}{}
+    %\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    %\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    %\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    %\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    %\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    %\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    %\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    %\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    %\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    %\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    %\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    %\newcommand{\RegionMarkerTok}[1]{{#1}}
+    %\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    %\newcommand{\NormalTok}[1]{{#1}}
+    
+    %% Define a nice break command that doesn't care if a line doesn't already
+    %% exist.
+    %\def\br{\hspace*{\fill} \\* }
+    %% Math Jax compatability definitions
+    %\def\gt{>}
+    %\def\lt{<}
+    
+
+    %% Pygments definitions
+    
+%\makeatletter
+%\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    %\let\PY@ul=\relax \let\PY@tc=\relax%
+    %\let\PY@bc=\relax \let\PY@ff=\relax}
+%\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+%\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    %\PY@tok{#1}\expandafter\PY@toks\fi}
+%\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    %\PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+%\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+%\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+%\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+%\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+%\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+%\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+%\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+%\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+%\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+%\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+%\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+%\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+%\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+%\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+%\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+%\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+%\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+%\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+%\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+%\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+%\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+%\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+%\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+%\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+%\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+%\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+%\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+%\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+
+%\def\PYZbs{\char`\\}
+%\def\PYZus{\char`\_}
+%\def\PYZob{\char`\{}
+%\def\PYZcb{\char`\}}
+%\def\PYZca{\char`\^}
+%\def\PYZam{\char`\&}
+%\def\PYZlt{\char`\<}
+%\def\PYZgt{\char`\>}
+%\def\PYZsh{\char`\#}
+%\def\PYZpc{\char`\%}
+%\def\PYZdl{\char`\$}
+%\def\PYZhy{\char`\-}
+%\def\PYZsq{\char`\'}
+%\def\PYZdq{\char`\"}
+%\def\PYZti{\char`\~}
+%% for compatibility with earlier versions
+%\def\PYZat{@}
+%\def\PYZlb{[}
+%\def\PYZrb{]}
+%\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=blue,
+      linkcolor=darkorange,
+      citecolor=darkgreen,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    %\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    %UNFOLD
+%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% commands specific to this paper:%FOLDUP
+\providecommand{\RMAT}[1][{}]{\MtxUL{R}{#1}{}}
+\providecommand{\RHAT}[1][{}]{\MtxUL{\hat{R}}{#1}{}}
+%\providecommand{\AAA}[1][{}]{\MtxUL{A}{}{#1}}
+%\providecommand{\bbb}[1][{}]{\vectUL{b}{}{#1}}
+%\providecommand{\ccc}[1][{}]{\vectUL{c}{}{#1}}
+%\providecommand{\zzz}[1][{}]{\vectUL{z}{}{#1}}
+%\providecommand{\etav}[1][{}]{\vectUL{\eta}{}{#1}}
+%\providecommand{\yvec}[1][{}]{\vectUL{y}{}{#1}}
+%\providecommand{\Vfunc}[1]{\mathUL{\mathcal{V}}{#1}{}}
+%\providecommand{\Vmin}{\Vfunc{-}}
+%\providecommand{\Vmax}{\Vfunc{+}}
+%\providecommand{\tncdf}[5]{\funcit{F}{{#1};{#2},{#3},{#4},{#5}}}
+
+\providecommand{\makerho}[3][{\vone}]{{#2}\wrapParens{\ogram{#1}} + {#3}\,\eye}
+\providecommand{\pmone}[1][{}]{\vectUL{w}{}{#1}}
+% quantiles of Tukey
+\providecommand{\qtuk}[3]{\mathUL{q}{}{{#1},{#2},{#3}}}
+
+
+\providecommand{\xxx}[1][{}]{\vectUL{x}{}{#1}}
+\providecommand{\yyy}[1][{}]{\vectUL{y}{}{#1}}
+\providecommand{\posthoc}{\emph{post hoc}\xspace}
+\providecommand{\rangef}[1]{\funcit{R}{#1}}
+\providecommand{\code}[1]{\texttt{#1}}
+%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% document incantations%FOLDUP
+\begin{document}
+
+%\title{Conditional estimation on the \txtSNR of the asset with maximum \txtSR}
+\title{A \posthoc test on the \txtSR}
+\author{Steven E. Pav \thanks{\email{steven@gilgamath.com}.
+The source code to build this document is available at
+\href{http://www.github.com/shabbychef/posthoc_sr}{\normalfont\texttt{www.github.com/shabbychef/posthoc\_sr}}.
+This revision was built from commit \texttt{\gitHash} of that repo.
+}}
+%\date{\today, \currenttime}
+
+\maketitle
+%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}%FOLDUP
+  We describe a \posthoc test for the \txtSR, analogous to Tukey's test
+  for pairwise equality of means. 
+  The test can be applied after rejection of the hypothesis that all
+  population \txtSNRs are equal.
+  The test is applicable under a simple correlation structure among
+  asset returns.
+\end{abstract}%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}%FOLDUP
+
+Sharpe's ``reward-to-variability ratio'' 
+was originally devised to compare the performance of mutual funds.  
+Sharpe found it to be weakly predictive of out-of-sample performance
+when measured over a \emph{decade} of returns.  \cite{Sharpe:1966}
+Early research on the \txtSR, as it came to be known\footnote{Although it was
+described over a decade earlier by A. D. Roy. \cite{roySafety1952}}, 
+ignored its statistical nature, treating it like an observable population parameter,
+though this was soon remedied.  \cite{CambridgeJournals:4493808,jobsonkorkie1981,lo2002}
+More recently, statistical procedures have been proposed to test whether the
+population \txtSRs of several assets (\eg mutual funds, ETFs, hedge funds, \etc)
+are equal.  \cite{Leung2008,wright2014}
+Here we propose a test to be used to compare pairwise differences after application
+of such a test.
+%One can view these tests as analogues of the classical ANOVA test, which
+%tests the hypothesis of equal mean among \nlatf different populations. \cite{bain1992introduction}
+%Following rejection of the null in an ANOVA, Tukey's \emph{range test}
+%is prescribed to find `honest significant differences' in pairwise
+%means. In this note, we describe the equivalent procedure for the \txtSR.
+
+%Even under that kind of clairvoyance, the measure cannot be made consistent with all
+%investors' preferences.  \cite{NBERw19500,zakamulin2008portfolio}
+%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The test}%FOLDUP
+
+Suppose one has observed \ssiz \iid samples of some $\nlatf$-vector \vreti,
+representing the returns of $\nlatf$ different ``assets.'' We imagine these
+assets to be different mutual funds, or trading strategies, ETFs, \etc
+From the sample one computes the \txtSR of each asset, resulting in 
+a $\nlatf$-vector, \svsr. 
+
+One natural question to ask is whether the ``\txtSNR'' (the
+population analogue of the \txtSR) of each asset is equal.
+One can test the hypothesis of equal \txtSNR via the
+tests of Leung and Wong, or Wright, Yam and Yung.
+\cite{Leung2008,wright2014}
+The test of Wright \etal, for example, uses asymptotic
+normality of the \svsr to construct a statistic following a 
+$\chi^2$ distribution under the null.
+In the case where one rejects the null hypothesis of equality,
+one seeks a \posthoc test, to determine which pairs of the \nlatf
+assets have different \txtSNR.
+
+Testing the equality of \txtSNRs is analogous to the classical
+procedure for testing equality of means via ANOVA.  \cite{bain1992introduction}
+The \posthoc procedure that classically followed a rejection
+of the null in ANOVA is Tukey's range test,
+sometimes called the ``honest significant difference'' (HSD) test.
+\cite{tukey_hsd,bretz2016multiple}
+In the ANOVA, and Tukey's HSD, the quantity is assumed
+to have identical variance among all individuals, but
+potentially different means in different groups.
+For this reason, the variance is estimated by pooling all
+observations.
+It is unnecessary to assume equal volatility of the returns
+for the $\nlatf$ different assets when testing the \txtSNR.
+While this simplifies our \posthoc test somewhat, 
+typically in the testing of 
+asset returns one observes them contemporaneously,
+and they are generally correlated.
+
+Tukey's HSD proceeds by computing an upper quantile on the
+\emph{range} of independent normals divided by a rescaled
+$\chi$ variable.  When the means of two individuals
+differ by more than this amount, one rejects the null
+that they are equal.  
+Our test will perform a similar computation.
+
+Previously the author showed that when returns are
+drawn from a multivariate normal distribution with
+correlation \RMAT, then
+\begin{equation}
+\svsr \approx 
+\normlaw{\pvsnr,\oneby{\ssiz}\wrapParens{\RMAT +
+	%\frac{\kurty-1}{4} \ogram{\pvsnr} + 
+	\frac{1}{2} \Mdiag{\pvsnr} \wrapParens{\RMAT\hadm\Mtx{R}} \Mdiag{\pvsnr}}},
+  \label{eqn:apx_srdist_gaussian}
+\end{equation}
+where \pvsnr is the vector of \txtSNRs and \ssiz is the sample size.  \cite{pav2019maxsharpe}
+Note that the approximate covariance matrix here generalizes the well-known 
+standard error of the scalar \txtSR.  \cite{Johnson:1940,jobsonkorkie1981,lo2002,pav_ssc}
+In the case of the small \txtSNRs likely to be encountered in practice,
+that approximation may be further simplified to 
+\begin{equation}
+\svsr \approx \normlaw{\pvsnr,\oneby{\ssiz}\RMAT}.
+  \label{eqn:apx_srdist_simple}
+\end{equation}
+Then under the null hypothesis that $\pvsnr=\pvsnr[0]$, one observes
+\begin{equation}
+  \vect{z} = \sqrt{\ssiz}\ichol{\RMAT} \wrapParens{\svsr - \pvsnr[0]} \approx \normlaw{\vzero,\eye},
+  \label{eqn:bonf_zform_simple}
+\end{equation}
+where $\ichol{\RMAT}$ is the inverse of the (symmetric) square root of $\RMAT$.
+
+
+%Let us consider a simple model for the correlation matrix
+As previously, we assume a simple rank-one form for the correlation matrix,
+\begin{equation}
+\label{eqn:simple_RMAT}
+\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},
+\end{equation}
+where $\abs{\rho} \le 1$. \cite{pav2019maxsharpe}
+Under this assumption, it is simple to show that
+\begin{equation}
+  \label{eqn:simple_RMAT_ichol_simple}
+  \ichol{\RMAT} = 
+  %\makerho{\oneby{\nlatf}\wrapParens{\oneby{\sqrt{1-\rho+\nlatf\rho}} - \oneby{\sqrt{1-\rho}}}}{\wrapParens{1-\rho}^{-1/2}}.
+   \makerho{c}{\wrapParens{1-\rho}^{-1/2}},
+\end{equation}
+for some constant $c$.
+
+Now we consider the difference in \txtSRs of two assets, indexed by $i$ and $j$.
+Let $\vect{v}=\basev[i]-\basev[j]$, where $\basev[i]$ is the \kth{i} column of
+the identity matrix. From \eqnref{bonf_zform_simple} we have
+\begin{align*}
+  \trAB{\vect{v}}{\vect{z}} &= \trAB{\vect{v}}{\sqrt{\ssiz}\ichol{\RMAT} \wrapParens{\svsr - \pvsnr[0]}},\nonumber\\
+  &= \sqrt{\ssiz}\trAB{\vect{v}}{\wrapBracks{\makerho{c}{\wrapParens{1-\rho}^{-1/2}}}} \wrapParens{\svsr - \pvsnr[0]},\\
+  &= \sqrt{\frac{\ssiz}{1-\rho}}\trAB{\vect{v}}{\svsr}.
+\end{align*}
+Here we have used that $\trAB{\vect{v}}{\vone} = 0$ and 
+under the null hypothesis, \pvsnr[0] is some constant times \vone. Thus
+\begin{equation}
+  \ssr[i] - \ssr[j] = \sqrt{\frac{1-\rho}{\ssiz}} \wrapParens{z_i - z_j}.
+\end{equation}
+Now note that the \vect{z} is distributed as a standard multivariate normal. 
+So the \emph{range} of \svsr, which is to say $\max_{i,j}\wrapParens{\ssr[i] - \ssr[j]}$,
+is distributed as $\sqrt{\wrapParens{1-\rho}/\ssiz}$ times the range of
+a standard $\nlatf$-variate normal.
+
+To quote this as a hypothesis test, %for a fixed type I rate, \typeI,
+\begin{equation}
+  \label{eqn:hyp_test_inf_df}
+  \max_{i,j} \abs{\ssr[i] - \ssr[j]} \ge HSD = \qtuk{1-\typeI}{\nlatf}{\infty} \sqrt{\frac{(1-\rho)}{\ssiz}},
+\end{equation}
+with probability \typeI, 
+where the $\qtuk{1-\typeI}{k}{l}$ is the upper $\typeI$-quantile 
+of the Tukey distribution with $k$ and $l$ degrees of freedom. 
+In the \textsc{R} language, this quantile may be computed via the
+\texttt{qtukey} function.  \cite{Rlang,OdehEvans}
+With $l=\infty$, the cutoff $HSD$ is the rescaled upper \typeI
+quantile of the range of \nlatf independent Gaussians.
+That is, $\qtuk{1-\typeI}{\nlatf}{\infty}$ is the number such that
+$$
+1-\typeI = \nlatf \int_{-\infty}^{\infty} \dnorm[x]\wrapParens{\pnorm[x + \qtuk{1-\typeI}{\nlatf}{\infty}] - \pnorm[x]}^{\nlatf-1} \dx.
+$$
+% prob of range?
+%http://www.di.fc.ul.pt/~jpn/r/prob/range.html
+%http://scaapt.org/wp2013/wp-content/uploads/2015/09/SCAAPT_range_notes.pdf
+
+We note that the approximation of \eqnref{apx_srdist_gaussian} may be too coarse
+for the computation of the $HSD$ cutoff. 
+Even if the covariance given there is approximately correct, it is likely
+that the distributional shape of $\svsr$ is far enough from multivariate normal
+that we cannot use Tukey's distribution for a cutoff, especially when $\ssiz$ is
+small and $\nlatf$ is large.
+In that case, one is tempted to heuristically compare the observed range to
+\begin{equation}
+\label{eqn:hsd_n_df}
+  HSD=\qtuk{1-\typeI}{\nlatf}{\ssiz-1}\sqrt{\frac{(1-\rho)}{\ssiz-1}}.
+\end{equation}
+The reasoning here is that we are essentially computing the range of (non-independent)
+$t$ statistics, up to scaling, which is almost the same as the Tukey distribution,
+which is the ratio of the range of normals divided by a pooled $\chi$ variable.
+In our testing below we will refer to the cutoff of \eqnref{hyp_test_inf_df} as 
+``$df=\infty$'' and the cutoff of \eqnref{hsd_n_df} as the ``$df=\ssiz-1$'' cutoff.
+
+\paragraph{Bonferroni Cutoff: }
+
+We note that an alternative calculation provides a very similar cutoff value.
+Considering two assets with correlation $\rho$.
+Suppose the \txtSNRs of the two assets are, respectively, 
+$\psnr\wrapParens{1 + \epsilon}$ and \psnr.
+The difference in \txtSRs can then be shown to be approximately normal: \cite{pav_ssc}
+\begin{equation}
+\wrapBracks{\ssr[1] - \ssr[2]}
+\rightsquigarrow 
+\normlaw{\epsilon\psnr,\frac{2}{\ssiz} \wrapParens{1 - \rho} +
+\frac{\psnrsq}{2\ssiz}\wrapParens{1 + \wrapParens{1+\epsilon}^2 - 2\rho^2\wrapParens{1+\epsilon}}
+}.
+\label{eqn:del_correlated_sr}
+\end{equation}
+Assuming that $\psnrsq / \ssiz$ will be very small for most practical work, one can
+compute the alternative cutoff, a ``Bonferroni Cutoff,'' as 
+$$
+BC = \sqrt{\frac{2 \wrapParens{1-\rho}}{\ssiz}} \qnorm{1 - \typeI/{\ssiz \choose 2}},
+$$
+where $\qnorm{\typeI}$ is the $\typeI$ quantile of the standard normal distribution.
+This cutoff is based on a Bonferroni correction that recognizes we are performing
+$\ssiz \choose 2$ pairwise comparison tests. 
+The cutoff $BC$ is typically very
+similar to $HSD$ (for $df=\infty$) or slightly smaller (and is easier to compute).
+We note that since $BC$ is based on a normal approximation, it may suffer
+from the same issues that the $HSD$ cutoff does for small samples. 
+However, there is hope one can compute an exact small $\ssiz$ Bonferroni cutoff.
+
+\paragraph{Arbitrary correlation structure: }
+
+The test outlined above is strictly only applicable
+to the rank-one correlation matrix, 
+$\RMAT=\makerho{\rho}{\wrapParens{1-\rho}}$.
+To apply the test to assets with arbitrary correlation matrices,
+one would like to appeal to a stochastic dominance result.
+For example, if one could adapt Slepian's lemma to the distribution
+of the \emph{range}, then the above analysis could be applied where $\rho$
+is the smallest off-diagonal correlation, to give a test with maximum
+type I rate of $\typeI$.
+However, it is not immediately clear that Slepian's lemma can be so
+modified.
+\cite{slepian1962one,zeitouni2015gaussian,yin2019stochastic}
+The Bonferroni Cutoff, however, is easily adapted to this kind of
+worst-case analysis, however.
+
+%UNFOLD
+
+\section{Examples}
+
+\subsection{Simulations under the null}%FOLDUP
+
+<<"null_sim_funcs",include=TRUE,echo=FALSE,cache=TRUE>>=
+suppressMessages({
+	library(mvtnorm)
+})
+
+# simulations of the range
+rngsims <- function(nsim,
+                    nman,   # number of 'managers'
+                    nday,   # number of days
+                    SNR,    # signal-noise ratio, in 'daily' units
+                    rho=0) {
+  require(mvtnorm)
+  R <- pmin(diag(nman) + rho,1)  
+  mu <- rep(SNR,nman)
+  ranges <- future_replicate(nsim,{
+    X <- mvtnorm::rmvnorm(nday,mean=mu,sigma=R)
+    zetahat <- colMeans(X) / apply(X,2,sd)
+    max(zetahat) - min(zetahat)
+  })
+  ranges
+}
+# get empirical type I rate under both tests
+bothrates <- function(nsim,
+                      nman,
+                      nday,
+                      SNR,
+                      rho,
+                      alpha=0.05) { 
+  rangs <- rngsims(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho)
+  # using Inf
+  HSDval_in <- sqrt((1-rho) / nday) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=Inf)
+  HSDval_df <- sqrt((1-rho) / (nday-1)) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=nday-1)
+  nover_in <- mean(rangs > HSDval_in)
+  nover_df <- mean(rangs > HSDval_df)
+  data.frame(df=c('inf','n'),rej=c(nover_in,nover_df))
+}
+# this is a feasible simulation, which guesses the rho from the observed X.
+# it is much slower.
+feas_rejsims <- function(nsim,
+                         nman,   # number of 'managers'
+                         nday,   # number of days
+                         SNR,    # signal-noise ratio, in 'daily' units
+                         R,      # correlation matrix
+                         alpha=0.05) { 
+  require(mvtnorm)
+  mu <- rep(SNR,nman)
+
+  qval_in <- sqrt(1 / nday) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=Inf)
+  qval_df <- sqrt(1 / (nday-1)) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=nday-1)
+
+  rejections <- future_replicate(nsim,{
+    X <- mvtnorm::rmvnorm(nday,mean=mu,sigma=R)
+    Rhat <- cov2cor(cov(X))
+    Rtri <- Rhat[row(Rhat) > col(Rhat)]
+    rhohat <- median(Rtri)
+    zetahat <- colMeans(X) / apply(X,2,sd)
+    sampr <- max(zetahat) - min(zetahat)
+    rej_in <- sampr > sqrt(1-rhohat) * qval_in
+    rej_df <- sampr > sqrt(1-rhohat) * qval_df
+    # assuming rho=0
+    rej_in0 <- sampr > qval_in
+    rej_df0 <- sampr > qval_df
+    c(rej_in,rej_df,rej_in0,rej_df0)
+  })
+  rejections
+}
+# AR(1) correlation matrix of a given size
+ARR <- function(rho,siz) {
+  toeplitz(rho^((1:siz)-1)) 
+}
+feas_rates <- function(nsim,
+                       nman,   # number of 'managers'
+                       nday,   # number of days
+                       SNR,    # signal-noise ratio, in 'daily' units
+                       rho=0,  # optional correlation to make R
+                       alpha=0.05,
+                       R=pmin(diag(nman) + rho,1)) {
+  rejs <- feas_rejsims(nsim=nsim,nman=nman,nday=nday,SNR=SNR,alpha=alpha,R=R)
+  data.frame(df=rep(c('inf','n'),2),
+             rhohat=c(rep('est',2),rep('zero',2)),
+             rej=rowMeans(rejs))
+}
+@
+
+% one sim%FOLDUP
+\paragraph{Basic Simulations}
+
+<<"null_basic_sim",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('null_sim_funcs')>>=
+suppressMessages({
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+nman <- 16    # number of funds
+nyr  <- 4     # number of years
+ope  <- 252   # observations per epoch (year)
+SNR  <- 1.0   # annual units
+rho  <- 0.8   # correlation
+
+nday <- round(nyr * ope)
+
+nsim <- ifelse(FINAL_VERSION,1e4,1e3)
+set.seed(1234)
+plan(multiprocess,workers=NCORE)
+ranges <- rngsims(nsim=nsim,nman=nman,nday=nday,SNR=SNR/sqrt(ope),rho=rho)
+plan(sequential)
+
+alpha <- 0.05
+HSDval <- sqrt((1-rho) / nday) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=Inf)
+nover <- mean(ranges > HSDval)
+pvals <- ptukey(sqrt(nday / (1-rho)) * ranges,lower.tail=FALSE,nmeans=nman,df=Inf)
+@
+
+We spawn \Sexpr{nyr} years of daily data (\Sexpr{ope} days per year) from 
+\Sexpr{16} assets, each with \txtSNR of $\Sexpr{SNR}\yrto{-\halff}$.
+Returns are multivariate normal with correlation
+$\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ for
+$\rho=\Sexpr{rho}$. 
+We compute the \txtSR of the simulated returns, $\svsr$, then compute
+the range $\max_{i,j} \ssr[i] - \ssr[j]$.
+We repeat this experiment \Sexpr{prettyNum(nsim,big.mark=',')} times.
+In \figref{null_basic_qq_plot}, we Q-Q plot these simulated ranges of 
+the \txtSR against the theoretical quantile function
+$$
+\sqrt{\frac{1-\rho}{\ssiz}}\qtuk{\cdot}{\nlatf}{\infty}.
+$$
+We see good agreement between theoretical and actual, with
+little deviance from the $y=x$ line.
+
+<<'null_basic_qq_plot',dependson=c('null_basic_sim'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+fig_cap <- paste0('The quantiles of the range of \\txtSR from ',prettyNum(nsim,big.mark=','),' simulations are plotted against a ',
+                  'transformed Tukey distribution, $\\sqrt{(1-\\rho)/\\ssiz}\\, \\qtuk{\\cdot}{\\nlatf}{\\infty}$. ',
+                  'The points show little deviation from the plotted $y=x$ line. ')
+
+# sometimes the qtukey function pukes! you have to linearly interpolate in that case.  not good.
+qfunc <- function(p,df=Inf) { qtukey(p,nmeans=nman,df=df) * sqrt((1-rho)/nday) }
+qqfunc <- function(p,df=Inf) { 
+  outv <- qfunc(p=p,df=df)
+  if (any(is.na(outv))) {
+    foo_x <- seq(0,1,length.out=5001)
+    foo_y <- qfunc(foo_x)
+    isok <- !is.na(foo_y)
+    foo_x <- foo_x[isok]
+    foo_y <- foo_y[isok]
+    outv[is.na(outv)] <- approx(foo_x,foo_y,xout=p[is.na(outv)])$y
+  }
+  outv
+}
+
+ph <- data_frame(rnj=ranges) %>%
+  ggplot(aes(sample=rnj)) +
+  stat_qq(distribution=qqfunc) + 
+  geom_abline(slope=1,intercept=0,linetype=3,color='blue') + 
+  scale_x_log10() + scale_y_log10() +
+  theme_minimal() + 
+  labs(title='Q-Q plot of ranges of Sharpe ratio')
+print(ph)
+@
+
+
+We then convert these simulated ranges to p-values via the
+\texttt{ptukey} function in \textsc{R}, using the
+$df=\infty$ cutoff and the actual $\rho$.
+We Q-Q plot these putative p-values against a uniform law in
+\figref{null_basic_pp_plot}, and again find very good agreement.
+To check the tails we have transformed the p-values to
+$p \mapsto \abs{2p - 1}$ and plotted in log-log scale.
+
+<<'null_basic_pp_plot',dependson=c('null_basic_sim'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The computed p-values from ',prettyNum(nsim,big.mark=','),' simulations are plotted against a uniform law, ',
+                  'visually confirming that the p-values are nearly uniform. ',
+                  'Simulations use the exact $\\rho$ to compute the p-values via \\code{ptukey}. ',
+                  'We transform the p-values and plot $\\abs{2p - 1}$ in log-log space to emphasize the tails. ',
+                  'The points show little deviation from the plotted $y=x$ line. ')
+
+ph <- data_frame(p=pvals) %>%
+  mutate(absp=abs(2*p-1)) %>%
+  ggplot(aes(sample=absp)) +
+  stat_qq(distribution=stats::qunif) +
+  geom_abline(slope=1,intercept=0,linetype=3,color='blue') + 
+  scale_x_log10() + scale_y_log10() +
+  theme_minimal() + 
+  labs(title='Q-Q plot of putative p-values, transformed as |2p-1|')
+print(ph)
+@
+
+%UNFOLD
+
+\clearpage
+
+% day scan%FOLDUP
+\paragraph{Varying \ssiz and \nlatf:}
+
+<<"null_sim_day_scan",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('null_sim_funcs')>>=
+suppressMessages({
+	library(dplyr)
+	library(tidyr)
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+params <- tidyr::crossing(data_frame(nday=c(20,40,80,160,320,640,1280)),
+                          data_frame(nman=c(8,16,32)))
+typeI <- 0.05
+
+ope  <- 252   # observations per epoch (year)
+SNR  <- 1.0 / sqrt(ope)  # annual units
+rho  <- 0.8   # correlation
+nsim <- ifelse(FINAL_VERSION,5e4,5e3)
+
+plan(multiprocess,workers=NCORE)
+set.seed(1234)
+resu <- params %>%
+  group_by(nman,nday) %>%
+    summarize(rat=list(bothrates(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho,alpha=typeI))) %>%
+  ungroup() %>%
+  unnest()
+plan(sequential)
+@
+
+
+Next we perform the same kind of simulations, but vary the number of days observed in each
+simulation, \ssiz, as well as the number of different assets, \nlatf.
+We let the former vary 
+from \Sexpr{min(params$nday)} to \Sexpr{prettyNum(max(params$nday),big.mark=',')}
+measured in days, 
+and the latter vary 
+from \Sexpr{min(params$nman)} to \Sexpr{max(params$nman)}.
+We take
+$\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ 
+for $\rho=\Sexpr{rho}$ and set the \txtSNR to $\Sexpr{SNR * sqrt(ope)}\yrto{-\halff}$.
+We assume $\Sexpr{ope}$ days per year for annualizing the \txtSR.
+For each set of $\Sexpr{prettyNum(nsim,big.mark=',')}$ simulations,
+we compute the empirical type I rate at the nominal $\Sexpr{typeI}$ level 
+by comparing the range to the HSD cutoff.
+We tabulate rejections using both the $df=\infty$ and $df=\ssiz-1$ cutoffs.
+
+We plot that type I rate against $\ssiz$ in \figref{null_day_scan_plot}
+for the different values of $\nlatf$. 
+For the $df=\infty$ cutoff, the procedure is apparently
+anticonservative, yielding too many type I errors, when the sample size is small
+and the number of assets is large. 
+For the $df=\ssiz-1$ cutoff, however, the nominal type I rate is approximately achieved.
+
+%This is likely due to the poor
+%quality of the approximation in \eqnref{apx_srdist_gaussian}.
+%Future research should focus on higher order (in \ssiz) approximations.
+
+<<'null_day_scan_plot',dependson=c('null_sim_day_scan'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The empirical type I rate at the nominal ',typeI,' level is plotted against ',
+                  'the number of days in each simulation, for different values of $\\nlatf$. ',
+                  'Simulations use the exact $\\rho$ to perform the hypothesis test. ',
+                  'The two facets show rejection rates under the $df=\\ssiz-1$ and $df=\\infty$ cutoffs. ',
+                  "When using the $df=\\infty$ cutoff, the test is anti-conservative for the ``large \\nlatf, small \\ssiz'' case, ",
+                  'but the nominal rate is nearly achieved for the $df=\\ssiz-1$ cutoff.')
+
+ph <- resu %>% 
+  mutate(df=gsub('^n$','n-1',df)) %>%
+  ggplot(aes(nday,rej,group=nman,color=factor(nman))) + 
+  geom_line() + 
+  geom_point(alpha=0.5) + 
+  geom_hline(yintercept=typeI,linetype=2) +
+  scale_y_continuous(labels=scales::percent,
+    limits=c(typeI/2,0.2)) + 
+  scale_x_log10(breaks=c(1/12,49/365.25,1/4,1/2,1,2,4)*ope,
+  labels=c('1 mo.','7 weeks','1 qtr.','6 mos.','1 year','2 yrs.','4 yrs.')) + 
+  facet_grid(.~df,labeller=label_both) + 
+  theme_minimal() + 
+  labs(x=paste0('sample size, at ',ope,' days per year'),
+       y=paste0('empirical type I rate, at nominal ',typeI,' rate'),
+       color='number of assets',
+       title='Empirical type I rate')
+print(ph)
+@
+%UNFOLD
+
+% rho scan%FOLDUP
+\paragraph{Varying $\rho$:}
+
+<<"null_sim_rho_scan",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('null_sim_funcs')>>=
+suppressMessages({
+	library(dplyr)
+	library(tidyr)
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+params <- tidyr::crossing(data_frame(rho=seq(0,0.95,length.out=11)))
+typeI <- 0.05
+
+nman <- 16
+ope  <- 252   # observations per epoch (year)
+nday <- ope * 4
+SNR  <- 1.0 / sqrt(ope)  # annual units
+nsim <- ifelse(FINAL_VERSION,5e4,5e3)
+
+plan(multiprocess,workers=NCORE)
+set.seed(1234)
+resu <- params %>%
+  group_by(rho) %>%
+    summarize(rat=list(bothrates(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho,alpha=typeI))) %>%
+  ungroup() %>%
+  unnest()
+plan(sequential)
+@
+
+We next perform the same simulations under the null, 
+with $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ 
+but scanning through $\rho$.
+We set $\ssiz=\Sexpr{prettyNum(nday,big.mark=',')}$ days, $\nlatf=\Sexpr{nman}$,
+and set the \txtSNR to $\Sexpr{SNR * sqrt(ope)}\yrto{-\halff}$.
+We compute the empirical type I rate at the nominal $\Sexpr{typeI}$ level for
+each set of $\Sexpr{prettyNum(nsim,big.mark=',')}$ simulations.
+We plot that type I rate against $\rho$ in \figref{null_rho_scan_plot}.
+For these values of $\ssiz, \nlatf$, the procedure achieves near nominal
+type I rate, and does not vary in a systematic way with $\rho$.
+
+<<'null_rho_scan_plot',dependson=c('null_sim_rho_scan'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The empirical type I rate at the nominal ',typeI,' level is plotted against ',
+                  'the correlation, $\\rho$. ',
+                  'Simulations use the exact $\\rho$ to perform the hypothesis test, ',
+                  'and the $df=\\ssiz-1$ cutoff. ')
+
+  #facet_grid(.~df,labeller=label_both) + 
+ph <- resu %>% 
+  filter(df=='n') %>%
+  mutate(df=gsub('^n$','n-1',df)) %>%
+  ggplot(aes(rho,rej)) + 
+  geom_line() + 
+  geom_point(alpha=0.5) + 
+  geom_hline(yintercept=typeI,linetype=2) +
+  scale_y_continuous(labels=scales::percent,limits=typeI + c(-0.01,0.01)) + 
+  theme_minimal() + 
+  labs(x=expression(rho),
+       y=paste0('empirical type I rate, at nominal ',typeI,' rate'),
+       color='number of assets',
+       title='Empirical type I rate')
+print(ph)
+@
+%UNFOLD
+
+% feasible rho scan%FOLDUP
+\paragraph{Feasible Estimator, Varying $\rho$:}
+
+In the simulations above we have used the actual $\rho$ in computing
+the threshold for rejection of the null.
+We repeat the experiments using a \emph{feasible} test where we
+esimate $\rho$ from the sample. 
+We compute the correlation of returns, then take the median value of 
+the upper triangle of the correlation matrix.
+
+<<"null_sim_feas_rho_scan",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('null_sim_funcs')>>=
+suppressMessages({
+	library(dplyr)
+	library(tidyr)
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+params <- tidyr::crossing(data_frame(rho=seq(0,0.95,length.out=11)))
+typeI <- 0.05
+
+nman <- 16
+ope  <- 252   # observations per epoch (year)
+nday <- ope * 4
+SNR  <- 1.0 / sqrt(ope)  # annual units
+nsim <- ifelse(FINAL_VERSION,5e4,5e3)
+
+plan(multiprocess,workers=NCORE)
+set.seed(1234)
+resu <- params %>%
+  group_by(rho) %>%
+    summarize(rat=list(feas_rates(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho,alpha=typeI))) %>%
+  ungroup() %>%
+  unnest()
+plan(sequential)
+@
+
+In the first set of simulations, the true correlation matrix follows
+$\RMAT=\makerho{\rho}{\wrapParens{1-\rho}}.$
+We set $\ssiz=\Sexpr{prettyNum(nday,big.mark=',')}$ days, $\nlatf=\Sexpr{nman}$,
+and set the \txtSNR to $\Sexpr{SNR * sqrt(ope)}\yrto{-\halff}$.
+We compute the empirical type I rate at the nominal $\Sexpr{typeI}$ level for
+each set of $\Sexpr{prettyNum(nsim,big.mark=',')}$ simulations.
+We plot that type I rate against $\rho$ in \figref{null_feas_rho_scan_plot}.
+For these values of $\ssiz, \nlatf$, the procedure achieves near nominal
+type I rate, and does not appear to suffer from having estimated the $\rho$.
+In fact the plot greatly resembles \figref{null_rho_scan_plot} where
+we have used the actual $\rho$.
+
+<<'null_feas_rho_scan_plot',dependson=c('null_sim_feas_rho_scan'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The empirical type I rate at the nominal ',typeI,' level is plotted against ',
+                  'the correlation, $\\rho$. ',
+                  'Simulations use an \\emph{estimated} $\\rho$ to perform the hypothesis test, ',
+                  'and the $df=\\ssiz-1$ cutoff. ')
+
+  #facet_grid(.~df,labeller=label_both) + 
+ph <- resu %>% 
+  filter(df=='n') %>%
+  filter(rhohat=='est') %>%
+  mutate(df=gsub('^n$','n-1',df)) %>%
+  ggplot(aes(rho,rej)) + 
+  geom_line() + 
+  geom_point(alpha=0.5) + 
+  geom_hline(yintercept=typeI,linetype=2) +
+  scale_y_continuous(labels=scales::percent,limits=typeI + c(-0.01,0.01)) + 
+  theme_minimal() + 
+  labs(x=expression(rho),
+       y=paste0('empirical type I rate, at nominal ',typeI,' rate'),
+       color='number of assets',
+       title='Empirical type I rate, feasible estimator')
+print(ph)
+@
+
+%UNFOLD
+
+% feasible rho scan AR(1)%FOLDUP
+\paragraph{Feasible Estimator, Misspecified Model, Varying $\rho$:}
+
+<<"null_sim_feas_ar1_rho_scan",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('null_sim_funcs')>>=
+suppressMessages({
+	library(dplyr)
+	library(tidyr)
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+params <- tidyr::crossing(data_frame(rho=seq(0,0.95,length.out=11)))
+typeI <- 0.05
+
+nman <- 16
+ope  <- 252   # observations per epoch (year)
+nday <- ope * 4
+SNR  <- 1.0 / sqrt(ope)  # annual units
+nsim <- ifelse(FINAL_VERSION,5e4,5e3)
+
+plan(multiprocess,workers=NCORE)
+set.seed(1234)
+resu <- params %>%
+  group_by(rho) %>%
+    summarize(rat=list(feas_rates(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho,R=ARR(rho,nman),alpha=typeI))) %>%
+  ungroup() %>%
+  unnest()
+plan(sequential)
+@
+
+We repeat those simulations, estimating the $\rho$ from the sample,
+but now we let the correlation matrix take an ``AR(1)'' structure.
+That is, we let $\RHAT[i,j] = \rho^{\abs{i-j}}$, and vary $\rho$.
+Again we have 
+$\ssiz=\Sexpr{prettyNum(nday,big.mark=',')}$ days, 
+$\nlatf=\Sexpr{nman}$,
+the \txtSNR is equal to $\Sexpr{SNR * sqrt(ope)}\yrto{-\halff}$.
+We compute the empirical type I rate at the nominal $\Sexpr{typeI}$ level for
+each set of $\Sexpr{prettyNum(nsim,big.mark=',')}$ simulations.
+
+For these simulations, we also record the type I rate when the $\rho$ is
+not estimated, but instead assumed to be $0$.
+Given that $\rho=0$ forms a kind of `stochastic lower bound', we expect
+that the procedure will be anti-conservative when performed this way.
+Indeed we see in the plot that the empirical type I rate
+decreases to zero in increasing $\rho$.
+For the case where we take the median sample correlation as the estimate
+of $\rho$, the procedure is somewhat conservative for small $\rho$,
+then anti-conservative for large $\rho$. This is not surprising:
+for large $\rho$, the median element of \RHAT will be fairly
+large, but the correlation among assets is somewhat weak. 
+A more robust heuristic for estimating the $\rho$ is needed.
+
+<<'null_feas_ar1_rho_scan_plot',dependson=c('null_sim_feas_ar1_rho_scan'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The empirical type I rate at the nominal ',typeI,' level is plotted against ',
+                  'the correlation, $\\rho$, for simulations where the correlation follows an AR(1) structure. ',
+                  'Simulations use an \\emph{estimated} $\\rho$ to perform the hypothesis test, ',
+                  'and the $df=\\ssiz-1$ cutoff. ',
+                  'We include separate lines for the cases where $\\rho$ is estimated, ',
+                  'and for where it is assumed to equal $0$. ',
+                  'For the estimated $\\rho$, ',
+                  'the procedure is conservative for small and moderate $\\rho$, ',
+                  'but anticonservative for $\\rho$ near 1. ',
+                  'When $\\rho=0$ is assumed, the procedure is increasingly conservative in $\\rho$. ')
+
+  #facet_grid(.~df,labeller=label_both) + 
+ph <- resu %>% 
+  filter(df=='n') %>%
+  mutate(rhohat=case_when(rhohat=='est'    ~ 'estimated',
+                          rhohat=='zero'   ~ 'zero',
+                          TRUE             ~ 'error')) %>%
+  mutate(df=gsub('^n$','n-1',df)) %>%
+  ggplot(aes(rho,rej,color=rhohat)) + 
+  geom_line() + 
+  geom_point(alpha=0.5) + 
+  geom_hline(yintercept=typeI,linetype=2) +
+  scale_y_continuous(labels=scales::percent,limits=c(0,typeI + 0.025)) + 
+  theme_minimal() + 
+  labs(x=expression(rho),
+       y=paste0('empirical type I rate, at nominal ',typeI,' rate'),
+       color='rho used',
+       title='Empirical type I rate, feasible estimator, AR(1) correlation')
+print(ph)
+@
+
+%UNFOLD
+
+%UNFOLD
+
+\clearpage
+
+\subsection{Simulations under the alternative}
+
+<<"alt_sim_funcs",include=TRUE,echo=FALSE,cache=TRUE>>=
+suppressMessages({
+	library(mvtnorm)
+})
+
+# simulations of the range
+alt_rngsims <- function(nsim,
+                        nman,   # number of 'managers'
+                        nday,   # number of days
+                        SNRvec, # signal-noise ratio, in 'daily' units
+                        hi_idx,lo_idx, 
+                        rho=0) {
+  require(mvtnorm)
+  R <- pmin(diag(nman) + rho,1)  
+  ranges <- future_replicate(nsim,{
+    X <- mvtnorm::rmvnorm(nday,mean=SNRvec,sigma=R)
+    zetahat <- colMeans(X) / apply(X,2,sd)
+    max(zetahat[hi_idx]) - min(zetahat[lo_idx])
+  })
+  ranges
+}
+# get empirical type I rate under both tests
+alt_bothrates <- function(nsim,
+                          nman,
+                          nday,
+                          SNRvec,
+                          rho,
+                          hi_idx,lo_idx,
+                          alpha=0.05) { 
+  rangs <- alt_rngsims(nsim=nsim,nman=nman,nday=nday,SNRvec=SNRvec,hi_idx=hi_idx,lo_idx=lo_idx,rho=rho)
+  # using Inf
+  HSDval_in <- sqrt((1-rho) / nday) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=Inf)
+  HSDval_df <- sqrt((1-rho) / (nday-1)) * qtukey(alpha,lower.tail=FALSE,nmeans=nman,df=nday-1)
+  nover_in <- mean(rangs > HSDval_in)
+  nover_df <- mean(rangs > HSDval_df)
+  data.frame(df=c('inf','n'),rej=c(nover_in,nover_df))
+}
+#alt_bothrates(100,nman=16,nday=128,SNRvec=c(0.15,rep(0,15)),rho=0.1,hi_idx=1,lo_idx=2:16)
+# run with 1 high, many zero
+onehi_bothrates <- function(nsim,
+                            nman,
+                            nday,
+                            SNR,
+                            rho,
+                            alpha=0.05) { 
+  alt_bothrates(nsim=nsim,nman=nman,nday=nday,
+                SNRvec=c(SNR,rep(0,nman-1)),
+                rho=rho,
+                hi_idx=1,
+                lo_idx=2:nman,
+                alpha=alpha)
+}
+# run with half high, many zero
+halhi_bothrates <- function(nsim,
+                            nman,
+                            nday,
+                            SNR,
+                            rho,
+                            alpha=0.05) { 
+  ishi <- floor(nman/2)
+  islo <- nman - ishi
+  alt_bothrates(nsim=nsim,nman=nman,nday=nday,
+                SNRvec=c(rep(SNR,ishi),rep(0,islo)),
+                rho=rho,
+                hi_idx=seq_len(ishi),
+                lo_idx=ishi + seq_len(islo),
+                alpha=alpha)
+}
+@
+
+
+We next perform the same simulations under the alternative.
+It is somewhat difficult to quantify the power of this procedure
+because the procedure can reject multiple nulls for a given
+experiment. 
+Indeed, in the simulations under the null above, we analyzed
+the rate of \emph{any} rejections for the multiple comparisons performed
+in a single simulation.
+
+\paragraph{Under the alternative, one good: }%FOLDUP
+
+<<"alt_sim_onehi_rho_scan",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('alt_sim_funcs')>>=
+suppressMessages({
+	library(dplyr)
+	library(tidyr)
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+typeI <- 0.05
+
+nman <- 16
+ope  <- 252   # observations per epoch (year)
+nday <- ope * 4
+nsim <- ifelse(FINAL_VERSION,1e4,5e3)
+
+params <- tidyr::crossing(data_frame(rho=c(0,0.5,0.9)),
+                          data_frame(SNR=seq(0,1.5,length.out=13) / sqrt(ope)))
+
+plan(multiprocess,workers=NCORE)
+set.seed(1234)
+resu <- params %>%
+  group_by(rho,SNR) %>%
+    summarize(rat=list(onehi_bothrates(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho,alpha=typeI))) %>%
+  ungroup() %>%
+  unnest()
+plan(sequential)
+@
+
+In the first set of simulations we let \pvsnr have a single non-zero
+value, call it \psr, and vary that \psr.
+We then compute, as the `range', the \txtSR of the single good asset
+minus the minimum \txtSR of the $\nlatf - 1$ remaining assets.
+Because we are only testing $\nlatf - 1$ comparisons, rather than
+${\nlatf \choose 2}$, we expect to see fewer than the nominal type I 
+rate when $\psr=0$. Moreover, we are performing a one-sided test.
+As such it may be more natural to compare the rejection rate to
+$\typeI/2$.
+
+We take $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ letting
+$\rho$ vary from \Sexpr{min(params$rho)} to \Sexpr{max(params$rho)};
+we set $\ssiz=\Sexpr{prettyNum(nday,big.mark=',')}$ days, 
+$\nlatf=\Sexpr{nman}$,
+and let \psnr vary 
+from $\Sexpr{min(params$SNR) * sqrt(ope)}\yrto{-\halff}$ 
+to $\Sexpr{max(params$SNR) * sqrt(ope)}\yrto{-\halff}$.
+
+We compute the rejection rate at the nominal $\Sexpr{typeI}$ level for
+each set of $\Sexpr{prettyNum(nsim,big.mark=',')}$ simulations.
+We plot that (true) rejection rate against $\psnr$ in \figref{alt_sim_onehi_scan_plot}.
+For these values of $\ssiz, \nlatf$, the procedure is fairly weak,
+only achieving power of one half for large \psnr or highly correlated
+assets.
+It is not surprising that the power is increasing in $\rho$: 
+one expects less spread among the assets for higher $\rho$,
+thus a true difference in \txtSNR is more easily detected.
+This same effect is visible in the paired test for
+equality of \txtSNRs.  \cite{pav_ssc}
+
+<<'alt_sim_onehi_scan_plot',dependson=c('alt_sim_onehi_rho_scan'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The empirical rejection rate at the nominal ',typeI,' level is plotted against ',
+                  'the correlation, $\\rho$. ',
+                  'The population consists of one good asset with \\txtSNR equal to \\psnr, ',
+                  'and the remainder with zero \\txtSNR. ',
+                  'Rejection is based on the \\txtSR of the single good asset minus the minimum ',
+                  '\\txtSR of the remaining assets. ',
+                  'Simulations use the exact $\\rho$ to perform the hypothesis test, ',
+                  'and the $df=\\ssiz-1$ cutoff. ',
+                  'We plot a horizontal line at half the nominal type I rate, ',typeI/2,', because ',
+                  'we are performing a one-sided test. ')
+
+  #facet_grid(.~df,labeller=label_both) + 
+ph <- resu %>% 
+  filter(df=='n') %>%
+  mutate(df=gsub('^n$','n-1',df)) %>%
+  mutate(zeta=sqrt(ope) * SNR) %>%
+  ggplot(aes(zeta,rej,color=factor(rho))) + 
+  geom_line() + 
+  geom_point(alpha=0.5) + 
+  geom_hline(yintercept=typeI / 2,linetype=2) +
+  scale_y_continuous(labels=scales::percent) + 
+  theme_minimal() + 
+  labs(x=expression(zeta),
+       y=paste0('empirical rejection rate, at nominal ',typeI,' rate'),
+       color=expression(rho),
+       title='Empirical rejection rate, one good asset')
+print(ph)
+@
+%UNFOLD
+
+\paragraph{Under the alternative, half good: }%FOLDUP
+
+<<"alt_sim_halhi_rho_scan",include=TRUE,echo=FALSE,cache=TRUE,dependson=c('alt_sim_funcs')>>=
+suppressMessages({
+	library(dplyr)
+	library(tidyr)
+	library(future.apply)
+})
+
+NCORE <- 1
+if (require(parallel)) {
+  NCORE <- pmax(1,detectCores() - 1)
+}
+
+typeI <- 0.05
+
+nman <- 16
+ope  <- 252   # observations per epoch (year)
+nday <- ope * 4
+nsim <- ifelse(FINAL_VERSION,1e4,5e3)
+
+params <- tidyr::crossing(data_frame(rho=c(0,0.5,0.9)),
+                          data_frame(SNR=seq(0,1.5,length.out=13) / sqrt(ope)))
+
+plan(multiprocess,workers=NCORE)
+set.seed(1234)
+resu <- params %>%
+  group_by(rho,SNR) %>%
+    summarize(rat=list(halhi_bothrates(nsim=nsim,nman=nman,nday=nday,SNR=SNR,rho=rho,alpha=typeI))) %>%
+  ungroup() %>%
+  unnest()
+plan(sequential)
+@
+
+We repeat those experiments, but set half the $\Sexpr{nman}$ assets
+to have \txtSNR equal to \psnr, and the rest to have zero \txtSNR.
+We compute, as the `range', the maximum \txtSR of the good assets
+minus the minimum \txtSR of the $\nlatf - 1$ remaining assets.
+We are effectively testing $\wrapParens{\nlatf / 2}^2$ comparisons,
+Because we are only testing $\nlatf - 1$ comparisons, rather than
+${\nlatf \choose 2}$, so we expect to see fewer than the nominal type I 
+rate when $\psr=0$. 
+
+As above 
+we take $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ let
+$\rho$ vary from \Sexpr{min(params$rho)} to \Sexpr{max(params$rho)},
+$\ssiz=\Sexpr{prettyNum(nday,big.mark=',')}$ days, 
+$\nlatf=\Sexpr{nman}$,
+and let \psnr vary 
+from $\Sexpr{min(params$SNR) * sqrt(ope)}\yrto{-\halff}$ 
+to $\Sexpr{max(params$SNR) * sqrt(ope)}\yrto{-\halff}$.
+
+We compute the rejection rate at the nominal $\Sexpr{typeI}$ level for
+each set of $\Sexpr{prettyNum(nsim,big.mark=',')}$ simulations.
+We plot that (true) rejection rate against $\psnr$ in \figref{alt_sim_halhi_scan_plot}.
+For these values of $\ssiz, \nlatf$, the procedure is again
+fairly underpowered, with higher power for more correlated
+assets.
+
+<<'alt_sim_halhi_scan_plot',dependson=c('alt_sim_halhi_rho_scan'),eval=TRUE,echo=FALSE,fig.cap=fig_cap>>=
+suppressMessages({
+  library(ggplot2)
+  library(dplyr)
+})
+
+fig_cap <- paste0('The empirical rejection rate at the nominal ',typeI,' level is plotted against ',
+                  'the correlation, $\\rho$. ',
+                  'The population consists of half good assets with \\txtSNR equal to \\psnr, ',
+                  'and the remainder with zero \\txtSNR. ',
+                  'Rejection is based on the maximum \\txtSR of the good assets minus the minimum ',
+                  '\\txtSR of the remaining assets. ',
+                  'Simulations use the exact $\\rho$ to perform the hypothesis test, ',
+                  'and the $df=\\ssiz-1$ cutoff. ',
+                  'We plot a horizontal line at half the nominal type I rate, ',typeI/2,', because ',
+                  'we are performing a one-sided test. ')
+
+  #facet_grid(.~df,labeller=label_both) + 
+ph <- resu %>% 
+  filter(df=='n') %>%
+  mutate(df=gsub('^n$','n-1',df)) %>%
+  mutate(zeta=sqrt(ope) * SNR) %>%
+  ggplot(aes(zeta,rej,color=factor(rho))) + 
+  geom_line() + 
+  geom_point(alpha=0.5) + 
+  geom_hline(yintercept=typeI / 2,linetype=2) +
+  scale_y_continuous(labels=scales::percent) + 
+  theme_minimal() + 
+  labs(x=expression(zeta),
+       y=paste0('empirical rejection rate, at nominal ',typeI,' rate'),
+       color=expression(rho),
+       title='Empirical rejection rate, half good assets')
+print(ph)
+@
+%UNFOLD
+
+\clearpage
+
+\subsection{Real Assets}
+
+We now apply the technique to real asset returns.
+
+\paragraph{Five Industry Portfolios:}
+
+<<"mind5_check",include=TRUE,echo=FALSE,cache=TRUE>>=
+# this is just a package of some data:
+# if (!require(aqfb.data)) { install.packages('shabbychef/aqfb_data') }
+library(aqfb.data)
+data(mind5)
+TEO <- index(mind5)
+TEO_0 <- TEO[1]
+TEO_f <- TEO[length(TEO)]
+
+mysr <- colMeans(mind5) / apply(mind5,2,FUN=sd)
+# sort decreasing for convenience later
+mysr <- sort(mysr,decreasing=TRUE)
+# annualize it
+ope <- 12
+mysr <- sqrt(ope) * mysr
+# show
+##print(mysr)
+
+require(broom)
+srfoo <- broom::tidy(mysr) %>%
+  rename(sr=x) %>%
+  arrange(sr) 
+
+# the chi-square test, Wright et al#FOLDUP
+library(madness)
+Xbig <- as.matrix(mind5)
+XX2 <- cbind(Xbig,Xbig^2)
+muv2 <- t(as.madness(lm(XX2 ~ 1)))
+ntak <- ncol(Xbig)
+n <- nrow(XX2)
+zetabig <- muv2[1:ntak,1] / sqrt(muv2[ntak + (1:ntak),1] - muv2[1:ntak,1]^2)
+contrasts <- diag(ntak)[1:(ntak-1),] - diag(ntak)[2:ntak,]
+diffzeta <- contrasts %*% zetabig
+# no n b/c the vcov has an estimate of # observations
+zsemat <- vcov(diffzeta)
+covshow <- n * zsemat
+ischi <- t(val(diffzeta)) %*% (solve(vcov(diffzeta),val(diffzeta)))
+ndf <- ntak - 1
+isp <- pchisq(ischi,df=ndf,lower.tail=FALSE)
+#UNFOLD
+
+srdiff <- outer(mysr,mysr,FUN='-')
+R <- cov2cor(cov(mind5))
+# this ends up being around 0.8:
+myrho <- median(R[row(R) < col(R)])
+typeI <- 0.05
+nday <- nrow(mind5)
+HSD <- sqrt(ope) * sqrt((1-myrho) / (nday-1)) * qtukey(typeI,lower.tail=FALSE,nmeans=ncol(mind5),df=(nday-1))
+altv <- sqrt(ope) * sqrt((2/nday) * (1-myrho)) * qnorm(typeI / choose(ncol(mind5),2),lower.tail=FALSE)
+
+library(multcompView)
+lets <- multcompLetters(abs(srdiff) > HSD)
+#print(lets)
+@
+
+We consider the 5 industry portfolios, whose returns are computed and distributed by French.  \cite{ind_5_def} 
+The dataset consists of \Sexpr{nday} months of returns,
+from \Sexpr{TEO_0} to \Sexpr{TEO_f}.
+The returns are highly correlated, and the correlation matrix is likely
+well modeled by the form 
+$\makerho{\rho}{\wrapParens{1-\rho}},$
+with $\rho$ estimated as approximately $\Sexpr{signif(myrho,2)}$.
+The \txtSRs range from $\Sexpr{srfoo$sr[1]}\yrto{-\halff}$ for \Sexpr{srfoo$names[1]} to
+$\Sexpr{srfoo$sr[5]}\yrto{-\halff}$ for \Sexpr{srfoo$names[5]}.
+
+First we perform the hypothesis test of equality of \txtSNRs, as proposed by 
+Wright \etal \cite{wright2014}
+We compute a statistic of $\Sexpr{signif(ischi,3)}$ which should be distributed as a
+$\chi^2\wrapParens{\Sexpr{ndf}}$ under the null. \cite{pav_ssc}
+This corresponds to a p-value of $\Sexpr{isp}$, and we reject the null
+of equality of all \txtSNRs.
+
+Using the $df=\ssiz-1$ formulation and the estimated $\rho$, we compute
+$HSD = \Sexpr{HSD}\yrto{-\halff}$ for $\typeI = \Sexpr{typeI}$, 
+and narrowly reject the equality of \txtSNRs for \Sexpr{srfoo$names[1]} and \Sexpr{srfoo$names[5]}.
+In \figref{mind5_lolly_plot}, we plot these \txtSRs, along with error bars
+at plus and minus one $HSD$.
+
+<<'mind5_lolly_plot',dependson=c('mind5_check'),eval=TRUE,echo=FALSE,fig.cap=fig_cap,fig.height=resol/2.5,out.height=sprintf('%.3f\\textwidth',0.975/2.5)>>=
+fig_cap <- paste0("The annualized \\txtSR of French's 5 industry portfolios are plotted, ",
+                  'as computed on monthly returns from ',TEO_0,' to ',TEO_f,'. ',
+                  'We plot error bars at $\\pm HSD$ for $\\typeI=',typeI,'$. ',
+                  'We narrowly reject equality of the \\txtSNR of ',srfoo$names[1],' and ',srfoo$names[5],'. ')
+library(broom)
+library(ggplot2)
+ph <- srfoo %>%
+  mutate(industry=forcats::fct_reorder(factor(names),sr)) %>%
+  mutate(ylo=sr-HSD,yhi=sr+HSD) %>%
+  ggplot(aes(industry,sr,ymin=ylo,ymax=yhi)) + 
+  #geom_col(alpha=0.05) + 
+  geom_point(alpha=0.9) + 
+  geom_errorbar(width=0.3) + 
+  coord_flip() + 
+  theme_minimal() + 
+  labs(y=expression(hat(zeta)),
+       x='Industry',
+       title='Annualized sharpe ratios of 5 industry portfolios\nwith error bars at +/- HSD')
+print(ph)
+@
+
+
+\paragraph{Sharpe's 34 Mutual Funds: }
+<<'sr34_check',include=FALSE>>=
+# data from "Mutual Fund Performance"
+# Table I "Performance of 34 mutual funds, 1954-63"
+
+library(dplyr)
+rv <- tibble::tribble(~fund,   ~annual_ret_pct,    ~annual_var_pct,       ~SR,
+'Affiliated Fund', 14.6, 15.3, 0.75896,
+'American Business Shares',  10.0, 9.2, .75876,
+'Axe-Houghton, Fund A', 10.5, 13.5, .55551,
+'Axe-Houghton, Fund B', 12.0, 16.3, .55183,
+'Axe-Houghton, Stock Fund', 11.9, 15.6, .56991,
+'Boston Fund', 12.4, 12.1, .77842,
+'Broad Street Investing', 14.8, 16.8, .70329,
+'Bullock Fund', 15.7, 19.3, .65845,
+'Commonwealth Investment Company', 10.9, 13.7, .57841, 
+'Delaware Fund', 14.4, 21.4, .53253,
+'Dividend Shares', 14.4, 15.9, .71807,
+'Eaton and Howard, Balanced Fund', 11.0, 11.9, .67399,
+'Eaton and Howard, Stock Fund', 15.2, 19.2, .63486,
+'Equity Fund', 14.6, 18.7, .61902,
+'Fidelity Fund', 16.4, 23.5, .57020,
+'Financial Industrial Fund', 14.5, 23.0, .49971,
+'Fundamental Investors', 16.0, 21.7, .59894,
+'Group Securities, Common Stock Fund', 15.1, 19.1, .63316,
+'Group Securities, Fully Administered Fund', 11.4, 14.1, .59490,
+'Incorporated Investors', 14.0, 25.5, .43116,
+'Investment Company of America', 17.4, 21.8, .66169,
+'Investors Mutual', 11.3, 12.5, .66451,
+'Loomis-Sales Mutual Fund', 10.0, 10.4, .67358,
+'Massachusetts Investors Trust', 16.2, 20.8, .63398,
+'Massachusetts Investors-Growth Stock', 18.6, 22.7, .68687,
+'National Investors Corporation', 18.3, 19.9, .76798,
+'National Securities-Income Series', 12.4, 17.8, .52950,
+'New England Fund', 10.4, 10.2, .72703,
+'Putnam Fund of Boston', 13.1, 16.0, .63222,
+'Scudder, Stevens & Clark Balanced Fund', 10.7, 13.3, .57893,
+'Selected American Shares', 14.4, 19.4, .58788,
+'United Funds-Income Fund', 16.1, 20.9, .62698,
+'Wellington Fund', 11.3, 12.0, .69057,
+'Wisconsin Fund', 13.8, 16.9, 0.64091)
+
+# WS used 3 percent risk free ... 
+rv %>% mutate(ook=(annual_ret_pct - 3 ) / annual_var_pct)
+
+srfoo <- rv %>%
+  rename(names=fund) %>%
+  mutate(sr=annual_ret_pct / annual_var_pct) %>%
+  dplyr::select(names,sr) %>%
+  arrange(sr) 
+
+srmod <- lm(annual_ret_pct ~ annual_var_pct,data=rv) 
+
+#require(ggplot2)
+#require(ggrepel)
+#ph <- rv %>% ggplot(aes(annual_var_pct,annual_ret_pct,label=fund)) + 
+  #geom_point() +
+  #geom_text_repel() +
+  #labs(x='annual vol (% / sqrt(yr))',
+       #y='annual return (% / yr)',
+       #title='34 Mutual Funds, 1954-63.\nFrom Table I, W. Sharpe, Mutual Fund Performance.')
+#print(ph)
+# ggsave('mutual_fund_perf.png',scale=1.2) 
+
+
+# just picking this out of thin air, really...
+# let ope = 12
+# and assume 10 years
+myrho <- 0.85
+typeI <- 0.05
+mope <- 12
+yrow <- 120
+nasset <- nrow(rv)
+# yikes
+HSD <- sqrt(mope) * sqrt((1-myrho) / (yrow-1)) * qtukey(typeI,lower.tail=FALSE,nmeans=nasset,df=(yrow-1))
+altv <- sqrt(mope) * sqrt((2/yrow) * (1-myrho)) * qnorm(typeI / choose(nasset,2),lower.tail=FALSE)
+@
+
+We consider the returns of the 34 mutual funds described by Sharpe in his
+original paper.  \cite{Sharpe:1966} 
+We transcribed the annualized percent return and standard deviation values from 
+Sharpe's Table I.
+In his paper, Sharpe computed the ``reward-to-variability ratio'' of each using a fixed
+rate of $3\%$;
+however, we compute the \txtSR without subtracting a fixed rate.
+The \txtSRs range from $\Sexpr{srfoo$sr[1]}\yrto{-\halff}$ for \Sexpr{srfoo$names[1]} to
+$\Sexpr{srfoo$sr[34]}\yrto{-\halff}$ for \Sexpr{srfoo$names[34]}.
+
+We do not have access to the series of returns, and cannot estimate the correlation
+structure. 
+Somewhat optimistically we make the wild guess $\rho=\Sexpr{myrho}$.
+Based on this value, and setting $\typeI=\Sexpr{typeI}$, we
+compute $HSD = \Sexpr{HSD}\yrto{-\halff}$,
+and we fail to reject the null hypothesis that all \txtSNRs are equal.
+In \figref{sr34_lolly_plot}, we plot these \txtSRs, along with error bars
+at $\pm HSD$.
+Given the lack of separation of the funds, it is curious that
+Sharpe found correlation between the in-sample and out-of-sample
+\txtSRs of his funds. \cite{Sharpe:1966}
+
+<<'sr34_lolly_plot',dependson=c('sr34_check'),eval=TRUE,echo=FALSE,fig.cap=fig_cap,fig.height=resol/1.2,out.height=sprintf('%.3f\\textwidth',0.975/1.2)>>=
+fig_cap <- paste0("The annualized \\txtSR of Sharpe's 34 mutual funds are plotted. ",
+                  "Returns are from the decade 1954-1963. \\cite{Sharpe:1966} ",
+                  'We plot error bars at $\\pm HSD$. ',
+                  'We fail to reject the nulls that all pairwise differences are equal. ')
+library(broom)
+library(ggplot2)
+ph <- srfoo %>%
+  mutate(industry=forcats::fct_reorder(factor(names),sr)) %>%
+  mutate(ylo=sr-HSD,yhi=sr+HSD) %>%
+  ggplot(aes(industry,sr,ymin=ylo,ymax=yhi)) + 
+  #geom_col(alpha=0.05) + 
+  geom_point(alpha=0.9) + 
+  geom_errorbar(width=0.4) + 
+  geom_hline(yintercept=0,linetype=3,alpha=0.5) + 
+  coord_flip() + 
+  theme_minimal() + 
+  labs(y=expression(hat(zeta)),
+       x='Mutual Fund',
+       title="Sharpe ratios of Sharpe's 34 mutual funds")
+print(ph)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Future Work}%FOLDUP
+
+A number of issues remain outstanding:
+
+\begin{enumerate}
+\item The heuristic use of the $df=\ssiz-1$ cutoff requires theoretical
+  justification.
+\item A stochastic inequality like Slepian's lemma for ranges
+  would allow one to apply the test using a lower bound $\rho$ to
+  achieve maximum type I rate.
+\item Should we expect the Tukey HSD cutoff and the Bonferroni Cutoff to 
+  be nearly equal, or will one dominate the other under
+  certain conditions?
+\item Can the power of the test be improved?
+\end{enumerate}
+
+%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% bibliography%FOLDUP
+\bibliographystyle{plainnat}
+%\bibliography{common,rauto}
+\bibliography{common}
+%UNFOLD
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\appendix%FOLDUP
+
+%\section{Proof of Stochastic Dominance}
+
+%Let the range function $\rangef{\xxx} : \reals{n} \rightarrow \reals{+}$ be
+%defined as
+%\begin{equation}
+  %\label{eqn:def_rangef}
+  %\rangef{\xxx} = \max_{i} x_i - \min_{i} x_i.
+%\end{equation}
+%For a given $t$ we are interested in the indicator function 
+%for whether $\rangef{\xxx} \ge t$.
+%\begin{lemma}
+  %For $t \ge 0$, and all \xxx, \yyy
+  %\begin{enumerate}
+    %\item If $\rangef{\xxx \vee \yyy} \ge t$ or $\rangef{\xxx \wedge \yyy} \ge t$ then
+      %$\rangef{\xxx} \ge t$ or $\rangef{\yyy} \ge t$;
+    %\item If $\rangef{\xxx \vee \yyy} \ge t$ \emph{and} $\rangef{\xxx \wedge \yyy} \ge t$ then
+      %$\rangef{\xxx} \ge t$ and $\rangef{\yyy} \ge t$,
+  %\end{enumerate}
+  %where $\xxx \vee \yyy$ is the element-wise maximum of \xxx and \yyy, and $\xxx \wedge \yyy$ is
+  %the minimum.
+%\end{lemma}
+%\begin{proof}
+  %For the first part,
+  %suppose $\rangef{\xxx \vee \yyy} \ge t$, that is
+  %$$
+  %\rangef{\xxx \vee \yyy} =
+  %\max_{i} \wrapParens{x_i\vee y_i} - \min_{i} \wrapParens{x_i\vee y_i} \ge t.
+  %$$
+  %Without loss of generality suppose that the maximum occurs for \xxx, that is
+  %$\max_{i} \wrapParens{x_i\vee y_i}=\max_i x_i$. But
+  %$- \min_{i} \wrapParens{x_i\vee y_i} \le - \min_{i} x_i$, so
+  %$\rangef{\xxx\vee\yyy} \le \rangef{\xxx}$ and thus $\rangef{\xxx} \ge t$.
+
+  %Similarly, one can show that if $\rangef{\xxx \wedge \yyy} \ge t$, by
+  %considering which of \xxx and \yyy provides the minimum value that
+  %one of \rangef{\xxx} or \rangef{\yyy} exceeds $t$.
+
+
+
+  
+
+%\end{proof}
+
+%%UNFOLD
+
+\end{document}
+%for vim modeline: (do not edit)
+% vim:fdm=marker:fmr=FOLDUP,UNFOLD:cms=%%s:syn=rnoweb:ft=rnoweb:et:nu:tw=151:cole=0:fo=croql
