@@ -364,6 +364,9 @@ This revision was built from commit \texttt{\gitHash} of that repo.
   population \txtSNRs are equal.
   The test is applicable under a simple correlation structure among
   asset returns.
+  Simulations indicate the test maintains nominal type I rate under
+  a wide range of conditions and is moderately powerful under
+  reasonable alternatives.
 \end{abstract}%UNFOLD
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -693,7 +696,7 @@ rho  <- 0.8   # correlation
 
 nday <- round(nyr * ope)
 
-nsim <- ifelse(FINAL_VERSION,1e4,1e3)
+nsim <- ifelse(FINAL_VERSION,5e3,1e3)
 set.seed(1234)
 plan(multiprocess,workers=NCORE)
 ranges <- rngsims(nsim=nsim,nman=nman,nday=nday,SNR=SNR/sqrt(ope),rho=rho)
@@ -1666,7 +1669,10 @@ A number of issues remain outstanding:
 \item Should we expect the Tukey HSD cutoff and the Bonferroni Cutoff to 
   be nearly equal, or will one dominate the other under
   certain conditions?
-\item Can the power of the test be improved?
+\item Can we quantify the power of the test? 
+\item 
+  Though we suspect it cannot, 
+  can the power of the test be improved? 
 \end{enumerate}
 
 %UNFOLD

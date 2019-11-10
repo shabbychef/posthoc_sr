@@ -376,6 +376,9 @@ This revision was built from commit \texttt{\gitHash} of that repo.
   population \txtSNRs are equal.
   The test is applicable under a simple correlation structure among
   asset returns.
+  Simulations indicate the test maintains nominal type I rate under
+  a wide range of conditions and is moderately powerful under
+  reasonable alternatives.
 \end{abstract}%UNFOLD
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -614,7 +617,7 @@ $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ for
 $\rho=0.8$. 
 We compute the \txtSR of the simulated returns, $\svsr$, then compute
 the range $\max_{i,j} \ssr[i] - \ssr[j]$.
-We repeat this experiment 10,000 times.
+We repeat this experiment 5,000 times.
 In \figref{null_basic_qq_plot}, we Q-Q plot these simulated ranges of 
 the \txtSR against the theoretical quantile function
 $$
@@ -625,7 +628,7 @@ little deviance from the $y=x$ line.
 
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h]
-\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_basic_qq_plot-1} \caption[The quantiles of the range of \txtSR from 10,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nlatf}{\infty}$]{The quantiles of the range of \txtSR from 10,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nlatf}{\infty}$. The points show little deviation from the plotted $y=x$ line. }\label{fig:null_basic_qq_plot}
+\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_basic_qq_plot-1} \caption[The quantiles of the range of \txtSR from 5,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nlatf}{\infty}$]{The quantiles of the range of \txtSR from 5,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nlatf}{\infty}$. The points show little deviation from the plotted $y=x$ line. }\label{fig:null_basic_qq_plot}
 \end{figure}
 
 
@@ -642,7 +645,7 @@ $p \mapsto \abs{2p - 1}$ and plotted in log-log scale.
 
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h]
-\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_basic_pp_plot-1} \caption{The computed p-values from 10,000 simulations are plotted against a uniform law, visually confirming that the p-values are nearly uniform. Simulations use the exact $\rho$ to compute the p-values via \code{ptukey}. We transform the p-values and plot $\abs{2p - 1}$ in log-log space to emphasize the tails. The points show little deviation from the plotted $y=x$ line. }\label{fig:null_basic_pp_plot}
+\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_basic_pp_plot-1} \caption{The computed p-values from 5,000 simulations are plotted against a uniform law, visually confirming that the p-values are nearly uniform. Simulations use the exact $\rho$ to compute the p-values via \code{ptukey}. We transform the p-values and plot $\abs{2p - 1}$ in log-log space to emphasize the tails. The points show little deviation from the plotted $y=x$ line. }\label{fig:null_basic_pp_plot}
 \end{figure}
 
 
@@ -978,7 +981,10 @@ A number of issues remain outstanding:
 \item Should we expect the Tukey HSD cutoff and the Bonferroni Cutoff to 
   be nearly equal, or will one dominate the other under
   certain conditions?
-\item Can the power of the test be improved?
+\item Can we quantify the power of the test? 
+\item 
+  Though we suspect it cannot, 
+  can the power of the test be improved? 
 \end{enumerate}
 
 %UNFOLD
