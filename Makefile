@@ -38,7 +38,8 @@ DETEXIFY		 = perl $(HOME)/sys/perl/detexify.pl
 SCREEN_SIZE  = normal
 #include	$(HOME)/sys/etc/.Makefile.local
 
-PROJECT      = $(notdir $(PWD))
+#PROJECT      = $(notdir $(PWD))
+PROJECT      = posthoc
 TEX_SOURCE   = $(PROJECT).tex
 BIB_SOURCE   = $(PROJECT).bib
 DVI_TARGET   = $(PROJECT).dvi
@@ -58,7 +59,7 @@ STY_FILES    =
 #aspell
 ASPELL_FLAGS = 
 
-ARXIV_VERSION  			 = v4
+ARXIV_VERSION  			 = v1
 ARXIV_TAG 					 = $(PROJECT)_$(ARXIV_VERSION)
 
 ############## DEFAULT ##############

@@ -1,0 +1,12 @@
+```{r "setup",eval=TRUE,echo=FALSE,cache=TRUE,warning=FALSE,cache.path='cache/README_'}
+opts_chunk$set(comment=NA, message=FALSE, cache=TRUE, fig.width=5, fig.height=3, out.width='700px', out.height='400px')
+opts_chunk$set(cache.path='cache/README_',fig.path='figure/README_')
+options(digits=6)
+```
+
+# A _post hoc_ test for the Sharpe ratio
+
+This is code and text for a paper I will put on arxiv.
+
+
+[//]: # ( vim:ts=2:sw=2:tw=79:fdm=indent:syn=r:ft=markdown:ai:si:cin:nu:fo=croql:cino=p0t0c5(0: )

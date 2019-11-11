@@ -557,11 +557,11 @@ The difference in \txtSRs can then be shown to be approximately normal: \cite{pa
 Assuming that $\psnrsq / \ssiz$ will be very small for most practical work, one can
 compute the alternative cutoff, a ``Bonferroni Cutoff,'' as 
 $$
-BC = \sqrt{\frac{2 \wrapParens{1-\rho}}{\ssiz}} \qnorm{1 - \typeI/{\ssiz \choose 2}},
+BC = \sqrt{\frac{2 \wrapParens{1-\rho}}{\ssiz}} \qnorm{1 - \typeI/{\nlatf \choose 2}},
 $$
 where $\qnorm{\typeI}$ is the $\typeI$ quantile of the standard normal distribution.
 This cutoff is based on a Bonferroni correction that recognizes we are performing
-$\ssiz \choose 2$ pairwise comparison tests. 
+$\nlatf \choose 2$ pairwise comparison tests. 
 The cutoff $BC$ is typically very
 similar to $HSD$ (for $df=\infty$) or slightly smaller (and is easier to compute).
 We note that since $BC$ is based on a normal approximation, it may suffer
