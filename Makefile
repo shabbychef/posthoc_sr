@@ -101,6 +101,9 @@ doc : $(PROJECT).pdf  ## build the document by knitting source code
 %.pdf : %.tex
 	latexmk -f -bibtex -pdf -pdflatex="$(PDFLATEX)" -use-make $<
 
+%.md : %.Rmd
+	r -l knitr -e 'setwd("$(<D)");if (require(knitr)) { knit("$(<F)") }'
+
 # tex extras
 %.bbl : %.bib
 	$(PREBIB) $(BIBTEX) $*
