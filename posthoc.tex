@@ -398,7 +398,7 @@ are equal.  \cite{Leung2008,wright2014}
 Here we propose a test to be used to compare pairwise differences after application
 of such a test.
 %One can view these tests as analogues of the classical ANOVA test, which
-%tests the hypothesis of equal mean among \nlatf different populations. \cite{bain1992introduction}
+%tests the hypothesis of equal mean among \nstrat different populations. \cite{bain1992introduction}
 %Following rejection of the null in an ANOVA, Tukey's \emph{range test}
 %is prescribed to find `honest significant differences' in pairwise
 %means. In this note, we describe the equivalent procedure for the \txtSR.
@@ -410,11 +410,11 @@ of such a test.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The test}%FOLDUP
 
-Suppose one has observed \ssiz \iid samples of some $\nlatf$-vector \vreti,
-representing the returns of $\nlatf$ different ``assets.'' We imagine these
+Suppose one has observed \ssiz \iid samples of some $\nstrat$-vector \vreti,
+representing the returns of $\nstrat$ different ``assets.'' We imagine these
 assets to be different mutual funds, or trading strategies, ETFs, \etc
 From the sample one computes the \txtSR of each asset, resulting in 
-a $\nlatf$-vector, \svsr. 
+a $\nstrat$-vector, \svsr. 
 
 One natural question to ask is whether the ``\txtSNR'' (the
 population analogue of the \txtSR) of each asset is equal.
@@ -425,7 +425,7 @@ The test of Wright \etal, for example, uses asymptotic
 normality of the \svsr to construct a statistic following a 
 $\chi^2$ distribution under the null.
 In the case where one rejects the null hypothesis of equality,
-one seeks a \posthoc test, to determine which pairs of the \nlatf
+one seeks a \posthoc test, to determine which pairs of the \nstrat
 assets have different \txtSNR.
 
 Testing the equality of \txtSNRs is analogous to the classical
@@ -440,7 +440,7 @@ potentially different means in different groups.
 For this reason, the variance is estimated by pooling all
 observations.
 It is unnecessary to assume equal volatility of the returns
-for the $\nlatf$ different assets when testing the \txtSNR.
+for the $\nstrat$ different assets when testing the \txtSNR.
 While this simplifies our \posthoc test somewhat, 
 typically in the testing of 
 asset returns one observes them contemporaneously,
@@ -491,7 +491,7 @@ Under this assumption, it is simple to show that
 \begin{equation}
   \label{eqn:simple_RMAT_ichol_simple}
   \ichol{\RMAT} = 
-  %\makerho{\oneby{\nlatf}\wrapParens{\oneby{\sqrt{1-\rho+\nlatf\rho}} - \oneby{\sqrt{1-\rho}}}}{\wrapParens{1-\rho}^{-1/2}}.
+  %\makerho{\oneby{\nstrat}\wrapParens{\oneby{\sqrt{1-\rho+\nstrat\rho}} - \oneby{\sqrt{1-\rho}}}}{\wrapParens{1-\rho}^{-1/2}}.
    \makerho{c}{\wrapParens{1-\rho}^{-1/2}},
 \end{equation}
 for some constant $c$.
@@ -512,12 +512,12 @@ under the null hypothesis, \pvsnr[0] is some constant times \vone. Thus
 Now note that the \vect{z} is distributed as a standard multivariate normal. 
 So the \emph{range} of \svsr, which is to say $\max_{i,j}\wrapParens{\ssr[i] - \ssr[j]}$,
 is distributed as $\sqrt{\wrapParens{1-\rho}/\ssiz}$ times the range of
-a standard $\nlatf$-variate normal.
+a standard $\nstrat$-variate normal.
 
 To quote this as a hypothesis test, %for a fixed type I rate, \typeI,
 \begin{equation}
   \label{eqn:hyp_test_inf_df}
-  \max_{i,j} \abs{\ssr[i] - \ssr[j]} \ge HSD = \qtuk{1-\typeI}{\nlatf}{\infty} \sqrt{\frac{(1-\rho)}{\ssiz}},
+  \max_{i,j} \abs{\ssr[i] - \ssr[j]} \ge HSD = \qtuk{1-\typeI}{\nstrat}{\infty} \sqrt{\frac{(1-\rho)}{\ssiz}},
 \end{equation}
 with probability \typeI, 
 where the $\qtuk{1-\typeI}{k}{l}$ is the upper $\typeI$-quantile 
@@ -525,10 +525,10 @@ of the Tukey distribution with $k$ and $l$ degrees of freedom.
 In the \textsc{R} language, this quantile may be computed via the
 \texttt{qtukey} function.  \cite{Rlang,OdehEvans}
 With $l=\infty$, the cutoff $HSD$ is the rescaled upper \typeI
-quantile of the range of \nlatf independent Gaussians.
-That is, $\qtuk{1-\typeI}{\nlatf}{\infty}$ is the number such that
+quantile of the range of \nstrat independent Gaussians.
+That is, $\qtuk{1-\typeI}{\nstrat}{\infty}$ is the number such that
 $$
-1-\typeI = \nlatf \int_{-\infty}^{\infty} \dnorm[x]\wrapParens{\pnorm[x + \qtuk{1-\typeI}{\nlatf}{\infty}] - \pnorm[x]}^{\nlatf-1} \dx.
+1-\typeI = \nstrat \int_{-\infty}^{\infty} \dnorm[x]\wrapParens{\pnorm[x + \qtuk{1-\typeI}{\nstrat}{\infty}] - \pnorm[x]}^{\nstrat-1} \dx.
 $$
 % prob of range?
 %http://www.di.fc.ul.pt/~jpn/r/prob/range.html
@@ -539,11 +539,11 @@ for the computation of the $HSD$ cutoff.
 Even if the covariance given there is approximately correct, it is likely
 that the distributional shape of $\svsr$ is far enough from multivariate normal
 that we cannot use Tukey's distribution for a cutoff, especially when $\ssiz$ is
-small and $\nlatf$ is large.
+small and $\nstrat$ is large.
 In that case, one is tempted to heuristically compare the observed range to
 \begin{equation}
 \label{eqn:hsd_n_df}
-  HSD=\qtuk{1-\typeI}{\nlatf}{\ssiz-1}\sqrt{\frac{(1-\rho)}{\ssiz-1}}.
+  HSD=\qtuk{1-\typeI}{\nstrat}{\ssiz-1}\sqrt{\frac{(1-\rho)}{\ssiz-1}}.
 \end{equation}
 The reasoning here is that we are essentially computing the range of (non-independent)
 $t$ statistics, up to scaling, which is almost the same as the Tukey distribution,
@@ -569,11 +569,11 @@ The difference in \txtSRs can then be shown to be approximately normal: \cite{pa
 Assuming that $\psnrsq / \ssiz$ will be very small for most practical work, one can
 compute the alternative cutoff, a ``Bonferroni Cutoff,'' as 
 $$
-BC = \sqrt{\frac{2 \wrapParens{1-\rho}}{\ssiz}} \qnorm{1 - \typeI/{\nlatf \choose 2}},
+BC = \sqrt{\frac{2 \wrapParens{1-\rho}}{\ssiz}} \qnorm{1 - \typeI/{\nstrat \choose 2}},
 $$
 where $\qnorm{\typeI}$ is the $\typeI$ quantile of the standard normal distribution.
 This cutoff is based on a Bonferroni correction that recognizes we are performing
-$\nlatf \choose 2$ pairwise comparison tests. 
+$\nstrat \choose 2$ pairwise comparison tests. 
 The cutoff $BC$ is typically very
 similar to $HSD$ (for $df=\infty$) or slightly smaller (and is easier to compute).
 We note that since $BC$ is based on a normal approximation, it may suffer
@@ -621,14 +621,14 @@ We repeat this experiment 5,000 times.
 In \figref{null_basic_qq_plot}, we Q-Q plot these simulated ranges of 
 the \txtSR against the theoretical quantile function
 $$
-\sqrt{\frac{1-\rho}{\ssiz}}\qtuk{\cdot}{\nlatf}{\infty}.
+\sqrt{\frac{1-\rho}{\ssiz}}\qtuk{\cdot}{\nstrat}{\infty}.
 $$
 We see good agreement between theoretical and actual, with
 little deviance from the $y=x$ line.
 
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h]
-\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_basic_qq_plot-1} \caption[The quantiles of the range of \txtSR from 5,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nlatf}{\infty}$]{The quantiles of the range of \txtSR from 5,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nlatf}{\infty}$. The points show little deviation from the plotted $y=x$ line. }\label{fig:null_basic_qq_plot}
+\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_basic_qq_plot-1} \caption[The quantiles of the range of \txtSR from 5,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nstrat}{\infty}$]{The quantiles of the range of \txtSR from 5,000 simulations are plotted against a transformed Tukey distribution, $\sqrt{(1-\rho)/\ssiz}\, \qtuk{\cdot}{\nstrat}{\infty}$. The points show little deviation from the plotted $y=x$ line. }\label{fig:null_basic_qq_plot}
 \end{figure}
 
 
@@ -656,13 +656,13 @@ $p \mapsto \abs{2p - 1}$ and plotted in log-log scale.
 \clearpage
 
 % day scan%FOLDUP
-\paragraph{Varying \ssiz and \nlatf:}
+\paragraph{Varying \ssiz and \nstrat:}
 
 
 
 
 Next we perform the same kind of simulations, but vary the number of days observed in each
-simulation, \ssiz, as well as the number of different assets, \nlatf.
+simulation, \ssiz, as well as the number of different assets, \nstrat.
 We let the former vary 
 from 20 to 1,280
 measured in days, 
@@ -678,7 +678,7 @@ by comparing the range to the HSD cutoff.
 We tabulate rejections using both the $df=\infty$ and $df=\ssiz-1$ cutoffs.
 
 We plot that type I rate against $\ssiz$ in \figref{null_day_scan_plot}
-for the different values of $\nlatf$. 
+for the different values of $\nstrat$. 
 For the $df=\infty$ cutoff, the procedure is apparently
 anticonservative, yielding too many type I errors, when the sample size is small
 and the number of assets is large. 
@@ -690,7 +690,7 @@ For the $df=\ssiz-1$ cutoff, however, the nominal type I rate is approximately a
 
 \begin{knitrout}\small
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h]
-\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_day_scan_plot-1} \caption[The empirical type I rate at the nominal 0.05 level is plotted against the number of days in each simulation, for different values of $\nlatf$]{The empirical type I rate at the nominal 0.05 level is plotted against the number of days in each simulation, for different values of $\nlatf$. Simulations use the exact $\rho$ to perform the hypothesis test. The two facets show rejection rates under the $df=\ssiz-1$ and $df=\infty$ cutoffs. When using the $df=\infty$ cutoff, the test is anti-conservative for the ``large \nlatf, small \ssiz'' case, but the nominal rate is nearly achieved for the $df=\ssiz-1$ cutoff.}\label{fig:null_day_scan_plot}
+\includegraphics[width=0.975\textwidth,height=0.646\textwidth]{figure/posthoc_null_day_scan_plot-1} \caption[The empirical type I rate at the nominal 0.05 level is plotted against the number of days in each simulation, for different values of $\nstrat$]{The empirical type I rate at the nominal 0.05 level is plotted against the number of days in each simulation, for different values of $\nstrat$. Simulations use the exact $\rho$ to perform the hypothesis test. The two facets show rejection rates under the $df=\ssiz-1$ and $df=\infty$ cutoffs. When using the $df=\infty$ cutoff, the test is anti-conservative for the ``large \nstrat, small \ssiz'' case, but the nominal rate is nearly achieved for the $df=\ssiz-1$ cutoff.}\label{fig:null_day_scan_plot}
 \end{figure}
 
 
@@ -705,12 +705,12 @@ For the $df=\ssiz-1$ cutoff, however, the nominal type I rate is approximately a
 We next perform the same simulations under the null, 
 with $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ 
 but scanning through $\rho$.
-We set $\ssiz=1,008$ days, $\nlatf=16$,
+We set $\ssiz=1,008$ days, $\nstrat=16$,
 and set the \txtSNR to $1\yrto{-\halff}$.
 We compute the empirical type I rate at the nominal $0.05$ level for
 each set of $50,000$ simulations.
 We plot that type I rate against $\rho$ in \figref{null_rho_scan_plot}.
-For these values of $\ssiz, \nlatf$, the procedure achieves near nominal
+For these values of $\ssiz, \nstrat$, the procedure achieves near nominal
 type I rate, and does not vary in a systematic way with $\rho$.
 
 \begin{knitrout}\small
@@ -736,12 +736,12 @@ the upper triangle of the correlation matrix.
 
 In the first set of simulations, the true correlation matrix follows
 $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}}.$
-We set $\ssiz=1,008$ days, $\nlatf=16$,
+We set $\ssiz=1,008$ days, $\nstrat=16$,
 and set the \txtSNR to $1\yrto{-\halff}$.
 We compute the empirical type I rate at the nominal $0.05$ level for
 each set of $50,000$ simulations.
 We plot that type I rate against $\rho$ in \figref{null_feas_rho_scan_plot}.
-For these values of $\ssiz, \nlatf$, the procedure achieves near nominal
+For these values of $\ssiz, \nstrat$, the procedure achieves near nominal
 type I rate, and does not appear to suffer from having estimated the $\rho$.
 In fact the plot greatly resembles \figref{null_rho_scan_plot} where
 we have used the actual $\rho$.
@@ -766,7 +766,7 @@ but now we let the correlation matrix take an ``AR(1)'' structure.
 That is, we let $\RHAT[i,j] = \rho^{\abs{i-j}}$, and vary $\rho$.
 Again we have 
 $\ssiz=1,008$ days, 
-$\nlatf=16$,
+$\nstrat=16$,
 the \txtSNR is equal to $1\yrto{-\halff}$.
 We compute the empirical type I rate at the nominal $0.05$ level for
 each set of $50,000$ simulations.
@@ -818,9 +818,9 @@ in a single simulation.
 In the first set of simulations we let \pvsnr have a single non-zero
 value, call it \psr, and vary that \psr.
 We then compute, as the `range', the \txtSR of the single good asset
-minus the minimum \txtSR of the $\nlatf - 1$ remaining assets.
-Because we are only testing $\nlatf - 1$ comparisons, rather than
-${\nlatf \choose 2}$, we expect to see fewer than the nominal type I 
+minus the minimum \txtSR of the $\nstrat - 1$ remaining assets.
+Because we are only testing $\nstrat - 1$ comparisons, rather than
+${\nstrat \choose 2}$, we expect to see fewer than the nominal type I 
 rate when $\psr=0$. Moreover, we are performing a one-sided test.
 As such it may be more natural to compare the rejection rate to
 $\typeI/2$.
@@ -828,7 +828,7 @@ $\typeI/2$.
 We take $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ letting
 $\rho$ vary from 0 to 0.9;
 we set $\ssiz=1,008$ days, 
-$\nlatf=16$,
+$\nstrat=16$,
 and let \psnr vary 
 from $0\yrto{-\halff}$ 
 to $1.5\yrto{-\halff}$.
@@ -836,7 +836,7 @@ to $1.5\yrto{-\halff}$.
 We compute the rejection rate at the nominal $0.05$ level for
 each set of $10,000$ simulations.
 We plot that (true) rejection rate against $\psnr$ in \figref{alt_sim_onehi_scan_plot}.
-For these values of $\ssiz, \nlatf$, the procedure is fairly weak,
+For these values of $\ssiz, \nstrat$, the procedure is fairly weak,
 only achieving power of one half for large \psnr or highly correlated
 assets.
 It is not surprising that the power is increasing in $\rho$: 
@@ -861,17 +861,17 @@ equality of \txtSNRs.  \cite{pav_ssc}
 We repeat those experiments, but set half the $16$ assets
 to have \txtSNR equal to \psnr, and the rest to have zero \txtSNR.
 We compute, as the `range', the maximum \txtSR of the good assets
-minus the minimum \txtSR of the $\nlatf - 1$ remaining assets.
-We are effectively testing $\wrapParens{\nlatf / 2}^2$ comparisons,
-Because we are only testing $\nlatf - 1$ comparisons, rather than
-${\nlatf \choose 2}$, so we expect to see fewer than the nominal type I 
+minus the minimum \txtSR of the $\nstrat - 1$ remaining assets.
+We are effectively testing $\wrapParens{\nstrat / 2}^2$ comparisons,
+Because we are only testing $\nstrat - 1$ comparisons, rather than
+${\nstrat \choose 2}$, so we expect to see fewer than the nominal type I 
 rate when $\psr=0$. 
 
 As above 
 we take $\RMAT=\makerho{\rho}{\wrapParens{1-\rho}},$ let
 $\rho$ vary from 0 to 0.9,
 $\ssiz=1,008$ days, 
-$\nlatf=16$,
+$\nstrat=16$,
 and let \psnr vary 
 from $0\yrto{-\halff}$ 
 to $1.5\yrto{-\halff}$.
@@ -879,7 +879,7 @@ to $1.5\yrto{-\halff}$.
 We compute the rejection rate at the nominal $0.05$ level for
 each set of $10,000$ simulations.
 We plot that (true) rejection rate against $\psnr$ in \figref{alt_sim_halhi_scan_plot}.
-For these values of $\ssiz, \nlatf$, the procedure is again
+For these values of $\ssiz, \nstrat$, the procedure is again
 fairly underpowered, with higher power for more correlated
 assets.
 
