@@ -30,7 +30,7 @@ setup_git() {
   fi
   git checkout --orphan "travis-$TRAVIS_BUILD_NUMBER"
   git reset
-  git rm --cached $(git ls-files)
+  git rm -f --cached $(git ls-files)
 }
 
 commit_pdfs() {
