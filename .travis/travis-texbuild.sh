@@ -35,6 +35,7 @@ setup_git() {
 	echo "done"
 	git status
   git rm -f --ignore-unmatch --cached $(git ls-files)
+	echo "done with rm"
 }
 
 commit_pdfs() {
@@ -45,7 +46,9 @@ commit_pdfs() {
 }
 
 upload_files() {
+	echo "will add remote"
   git remote add origin-login "https://${GH_TOKEN}@github.com/$TRAVIS_REPO_SLUG.git"
+	echo "will push"
   git push --set-upstream -f origin-login "travis-$TRAVIS_BUILD_NUMBER"
   echo "PUSHED PDFS TO BRANCH travis-$TRAVIS_BUILD_NUMBER"
 }
@@ -64,7 +67,9 @@ else
   if [ "$pushtype" == "branch" ]; then
     echo "PUSHTYPE: $pushtype";
     setup_git;
+		echo "will commit pdfs?"
     commit_pdfs;
+		echo "done commit pdfs."
     [[ "$TRAVIS" == "true" ]] && upload_files;
   elif [ "$pushtype" == "release" ]; then
     echo "Push type release not supported yet."
