@@ -1,30 +1,15 @@
-# * Wed Nov 13 2019 08:45:00 PM Steven E. Pav steven@gilgamath.com
-# copied from https://raw.githubusercontent.com/HughParsonage/latex-travis/master/.travis.yml
-# cf 
-# https://tex.stackexchange.com/a/414739/2530
-
-language: r
-sudo: false
-latex: false
-pandoc: false
-warnings_are_errors: false
-
-install: echo "Nothing occurs at installation, only script"
+sudo: required
+language: generic
+services: docker
+tex-config:
+- tex-scheme=small
+- push-type=branch
+- build-pattern=posthoc.tex
+- packages=lipsum, blindtext
+env:
+  global:
+  - IS_TRAVIS=true
+  - secure: uBdoqNbctNluBWY/g8HLR728iTgbD1rN9Di2LK8Stdfr3e6BMKXMl45g0f7B86h4ttQY3VRmKUMZzXkBInvOholn01n1LZso8Snm5Il/WRbuM5z/3M0fJOrzyUkvxthjF0tclbEMLTSPFGfZboL9wNSqhxk8Kmvbe0eYlZkq5XouZdfrRdyec4V5I18IV44wjnEV9ZVKn7rs8h04rP3yBLm8tbGqLgGJPtdXSR9wSGNbBjSr4SSXg7S3jgY55k0M5MW5FMLisyHYcBjauUlYQuF8F/sPPnnqxVRD6Iqf6HYLJuz03DNmgN0lTKujYLvVTSp6h+0c81krqfHeuohn0IioDCL/744S2Bz8zROG3KZr5whbwdOVrgoF1DUtC3bTVy6xE6AQWP7tTSSI7KWBaHwVy63cewS+szmoCgWiZRHf8lbDA72SLN9yQS2mPofkAQqfsAMT6RSeGy5atZX33vmv9NvFpG9m6Dh8cPSE/qY65p5rTejp5vbfi+QXT+H4wPEgtGJH0htpSskpioiOcZak6OadtOIoTfyu2tu01p0Zf01W+RN7/rqhYhTnJgJRNgg9vlKr7STixP98mMP8XMeUb/Wbc5JqFAm5ZMjt72M4j4l0n/aB0TgfWaJL83F7y0XNLjnBKSrJDcHw2NImNEZ2h0kSMsfb5gWM3Kbrg38=
 script:
-- Rscript install_texlive.R
-- Rscript -e 'tinytex::pdflatex(list.files(pattern = "\\.tex$")[1], bib_engine = "bibtex")'
-branches:
-  - master
-  - travising
-deploy:
-  provider: releases
-  skip_cleanup: true
-  file: posthoc.pdf
-  on:
-    repo: shabbychef/posthoc_sr
-
-#api_key:
-#secure: c76lXK4lZWUX2UWO9cnnycCkBMD4fDxOR6ebRK48Ztp2e2t+Jf++hLuXa4QlUuQD1bKA/pJRHgv5n+ncZRK9tPxxMJwESUvvbuwG4i4Fm2QLLE6rjo4ZyqdoQUHVamQFvSRXNUQPE1UoA0kx3r39vs6zUuLGJnU0oytq3wZXGu3aaoY4ywP+JuIz799eYWCiuAAArg+uVd9wnmDyPALS/ajeT0j6R1KJrb5xUpoqREae9VI3IbxkpDsBefx5R36CKRBay2Z/4IebZAPwqu8Q02Fkmhxruk5soEnq/1f3ERvGwEJYBaSlfycxJ2cTXkuvOn5TJuTJgMhvc9Dbg4pAqAIUo5ka5NMHq64KwaD64TbFpvg93T712ijrAaJkjDfECz+mgAMWh0Dm1SYD2v52i05nYKv8cbsF/3He2v6SS65gH7E9bXNQEOBNfFqEJ0qXJ5vw4Zl9q3l71axtlZfKMw5Yrap5eHUjU3rzMX9XeqM+zl6XQRzFoqeeXXZAOIuQhEkRjF862AHD/50oGdLM7zT18Zk0Sq+c9Gx5TXcEmZn2j+qeD9JcWXP4JK7GMpdT5hj7CKSIq5oJdH9+VvS7M6ffcoaQ3HSPMkAzq4T8qXLsse8q0hNqBuaS0dVfGCKPbjnf9K/8xyrIG35w/xeBt/bcMepQL/9elL+XJMW3/Is=
-
-#for vim modeline: (do not edit)
-# vim:ts=2:sw=2:tw=79:fdm=marker:fmr=FOLDUP,UNFOLD:cms=#%s:tags=.tags;:syn=yaml:ft=yaml:et:ai:si:cin:nu:fo=croqt:cino=p0t0c5(0:ff=unix
+- chmod +x .travis/travis-texbuild.sh
+- ".travis/travis-texbuild.sh"
