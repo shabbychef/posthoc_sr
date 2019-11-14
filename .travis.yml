@@ -2,10 +2,10 @@ sudo: required
 language: generic
 services: docker
 tex-config:
-- tex-scheme=small
+- tex-scheme=full
 - push-type=branch
 - build-pattern=posthoc.tex
-- packages=lipsum, blindtext
+- packages=lipsum, blindtext, framed
 env:
   global:
   - IS_TRAVIS=true
