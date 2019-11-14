@@ -30,6 +30,10 @@ setup_git() {
   fi
   git checkout --orphan "travis-$TRAVIS_BUILD_NUMBER"
   git reset
+	echo "will git ls_files: "
+	git ls-files
+	echo "done"
+	git status
   git rm -f --ignore-unmatch --cached $(git ls-files)
 }
 
