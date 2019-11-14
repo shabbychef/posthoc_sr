@@ -30,12 +30,16 @@ setup_git() {
   fi
   git checkout --orphan "travis-$TRAVIS_BUILD_NUMBER"
   git reset
-	echo "will git ls_files: "
-	git ls-files
-	echo "done"
 	git status
-  git rm -f --ignore-unmatch --cached $(git ls-files)
-	echo "done with rm"
+	if [[ $(git ls-files) ]]; then
+		echo "will git ls_files: "
+		git ls-files
+		echo "done"
+		echo "will git rm"
+  	git rm -f --ignore-unmatch --cached $(git ls-files)
+		echo "done with rm"
+	fi
+	echo "done with setup"
 }
 
 commit_pdfs() {
