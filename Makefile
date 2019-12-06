@@ -16,35 +16,28 @@
 LATEX       := $(shell which latex)
 BIBTEX      := $(shell which bibtex)
 PDFLATEX    := $(shell which pdflatex)
-MAKEINDEX   := $(shell which makeindex)
 PAGER   		:= $(shell which less)
 ASPELL  		:= $(shell which aspell)
 
-RLIB         = /usr/lib64/R
+RLIB        ?= /usr/lib64/R
 
-TEXINPADD    = .:./Definitions:$(RLIB)/share/texmf/tex/latex
+TEXINPADD   ?= .:./Definitions:$(RLIB)/share/texmf/tex/latex
 
-PRETEX       = TEXINPUTS=$(TEXINPADD):$$TEXINPUTS
+PREBIB      ?= BSTINPUTS=$(TEXINPADD):$$BSTINPUTS \
 PREBIB       = BSTINPUTS=$(TEXINPADD):$$BSTINPUTS \
                BIBINPUTS=$(TEXINPADD):$$BIBINPUTS 
 
-PREIDX       = INDEXSTYLE=$(TEXINPADD):$$INDEXSTYLE
-
-#undoes psfrag for pdf
-UNPSFRAG		 = perl $(HOME)/sys/bin/unpsfrag.pl
-#unroll commands
-DETEXIFY		 = perl $(HOME)/sys/perl/detexify.pl
-
-SCREEN_SIZE  = normal
-#include	$(HOME)/sys/etc/.Makefile.local
+PREIDX      ?= INDEXSTYLE=$(TEXINPADD):$$INDEXSTYLE
 
 #PROJECT      = $(notdir $(PWD))
 PROJECT      = posthoc
 TEX_SOURCE   = $(PROJECT).tex
 BIB_SOURCE   = $(PROJECT).bib
-DVI_TARGET   = $(PROJECT).dvi
 PDF_TARGET   = $(PROJECT).pdf
+TXT_TARGET   = $(PROJECT).txt
 BBLS         = $(PROJECT).bbl
+
+TIMEIT 			?= time 
 
 #SAVE
 # tracked projects
@@ -61,6 +54,14 @@ ASPELL_FLAGS =
 
 ARXIV_VERSION  			 = v1
 ARXIV_TAG 					 = $(PROJECT)_$(ARXIV_VERSION)
+# arxiv accepts tarfiles. this is great.
+ARXIV_TAR 					?= $(PROJECT)_$(ARXIV_VERSION).tar.gz
+
+# for running in docker this gets passed to the knit
+# and controls speed of build. larger is faster.
+RUNTIME_PARAM 		?= 1
+
+export RUNTIME_PARAM:=$(RUNTIME_PARAM)
 
 ############## DEFAULT ##############
 
@@ -91,7 +92,7 @@ all : $(PROJECT).pdf  ## build the document by knitting source code
 doc : $(PROJECT).pdf  ## build the document by knitting source code
 
 %.tex : %.Rnw $(R_DEPS)
-		Rscript -e 'require(knitr);knit("$<")'
+		$(TIMEIT)Rscript -e 'require(knitr);knit("$<")'
 		@-perl -pi -e 's/(syn|ft)=(Rnw|rnoweb)/$$1=tex/g;' $@
 
 %.R : %.Rnw
@@ -100,6 +101,10 @@ doc : $(PROJECT).pdf  ## build the document by knitting source code
 
 %.pdf : %.tex
 	latexmk -f -bibtex -pdf -pdflatex="$(PDFLATEX)" -use-make $<
+
+# useful for getting the abstract into arxiv
+%.txt : %.pdf
+	pdftotext $< $@
 
 %.md : %.Rmd
 	r -l knitr -e 'setwd("$(<D)");if (require(knitr)) { knit("$(<F)") }'
@@ -138,14 +143,12 @@ doc : $(PROJECT).pdf  ## build the document by knitting source code
 %.clean : 
 		-rm -f $*.aux $*.log $*.dvi $*.bbl $*.blg $*.toc $*.ilg $*.ind
 		-rm -f $*.out $*.idx $*.lot $*.lof $*.brf $*.nav $*.snm $*.fls 
-
 %.realclean : %.clean
 		-rm -f $*.ps $*.pdf
 		-rm -f $*.fdb_latexmk
 		-rm -f $*-[0-9][0-9][0-9]*.eps $*-[0-9][0-9][0-9]*.pdf
 
 ############### RULES ###############
-
 
 release.tex: $(PROJECT).tex
 	perl -pe 's{figure/}{};' < $< > $@
@@ -190,6 +193,10 @@ untag : ## advice on github untagging
 	@-echo "git tag --delete $(ARXIV_TAG)"
 	@-echo "git push origin :$(ARXIV_TAG)"
 
+tarfile : $(ARXIV_TAR)  ## make tar file to upload to arxiv? experimental
+
+$(ARXIV_TAR) : $(TEX_SOURCE) $(BBLS) $(TEX_EXTRAS) $(R_DEPS) figure/ .git/gitHeadInfo.gin 
+	tar -czvf $@ $^
 
 #for vim modeline: (do not edit)
 # vim:ts=2:sw=2:tw=149:fdm=marker:fmr=FOLDUP,UNFOLD:cms=#%s:tags=tags;:syn=make:ft=make:ai:si:cin:nu:fo=croqt:cino=p0t0c5(0:
